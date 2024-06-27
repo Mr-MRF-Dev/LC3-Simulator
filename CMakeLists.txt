@@ -14,13 +14,17 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 include_directories(Assembler)
 
-set(PROJECT_SOURCES
+set(ASSEMBLER_SOURCES
     Assembler/assembler.h
     Assembler/assembler.cpp
+)
+
+set(PROJECT_SOURCES
         src/main.cpp
         src/mainwindow.cpp
         src/mainwindow.h
-    )
+        ${ASSEMBLER_SOURCES}
+)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(LC3-Simulator
