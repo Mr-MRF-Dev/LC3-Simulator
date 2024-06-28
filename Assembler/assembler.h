@@ -2,8 +2,10 @@
 #define ASSEMBLER_H
 
 // define keywords
-#define SPLIT_POINT '\n'
-#define COMMENT_CHAR ';'
+#define SPLIT_SYMBOL '\n'
+#define COMMENT_SYMBOL ';'
+#define SPACE_SYMBOL ' '
+#define COMMA_SYMBOL ','
 
 #include <string>
 #include <vector>
@@ -27,7 +29,7 @@ class Assembler {
 
         // compiler kernel & functions
         errorCode compiler(string);
-        vector<string> split(string);
+        vector<vector<string>> tokenize(string);
 
         // create bin file
         void saveFile(string);
