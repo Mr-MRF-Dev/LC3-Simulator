@@ -1,25 +1,69 @@
 #include "assembler.h"
 
-Assembler::Assembler() : msg("OK!") {}
+Assembler::Assembler() : msg("OK!") {
 
-errorCode Assembler::compiler(string in) {
+    file_name = string("memory") + BIN_FORMAT;
+    fill(arr, arr + MEMORY_SIZE, 0);  // clear the memory
+}
 
-    vector<vector<string>> codes = tokenize(in);
+Assembler::Assembler(string s) : msg("OK!") {
+
+    file_name = s + BIN_FORMAT;
+    fill(arr, arr + MEMORY_SIZE, 0);  // clear the memory
+}
+
+void Assembler::setFileName(string str) { file_name = str; }
+
+string Assembler::getFileName() { return file_name; }
+
+string Assembler::getMsg() { return msg; }
+
+errorCode Assembler::compiler(string str) {
+
+    // clear the basic variables and virtual memory
+    fill(arr, arr + MEMORY_SIZE, 0);
+    codes.clear();
+
+    tokenize(str);
 
     return OK_VALID;
 }
 
-void Assembler::saveFile(string file_name) {}
+/*
+save the virtual memory into file
+*/
+bool Assembler::saveFile() {
+    try {
+        std::ofstream outfile(file_name, std::ios::binary);
+        if (outfile.is_open()) {
+            outfile.write(reinterpret_cast<char *>(arr),
+                          MEMORY_SIZE * sizeof(_16_BIT));
+            outfile.close();
+            msg = "Done!";
+            return true;
+        }
 
-string Assembler::getMsg() { return msg; }
+        else {
+            // Set the error message
+            msg = "Error: Unable to open the file for writing.";
+            return false;
+        }
+    }
+
+    catch (const std::exception &e) {
+        msg =
+            "Error: Exception occurred during file I/O.\n\n" + string(e.what());
+        return false;
+    }
+}
 
 /*
 Splits this source by line, removes comments,
 pads commas, and then splits by whitespace.
 */
-vector<vector<string>> Assembler::tokenize(string str) {
+void Assembler::tokenize(string str) {
 
-    vector<vector<string>> final;
+    codes.clear();
     vector<string> vec;
     string temp = "";
     int count = 0;
@@ -66,7 +110,7 @@ vector<vector<string>> Assembler::tokenize(string str) {
             }
 
             // remove the empty lines
-            if (!vec.empty()) final.push_back(vec);
+            if (!vec.empty()) codes.push_back(vec);
             vec.clear();
         }
     }
@@ -79,7 +123,7 @@ vector<vector<string>> Assembler::tokenize(string str) {
     }
 
     // remove the empty lines
-    if (!vec.empty()) final.push_back(vec);
-
-    return final;
+    if (!vec.empty()) codes.push_back(vec);
 }
+
+// map<string, int> Assembler::getLabelAddr() {}

@@ -6,7 +6,12 @@
 #define COMMENT_SYMBOL ';'
 #define SPACE_SYMBOL ' '
 #define COMMA_SYMBOL ','
+#define BIN_FORMAT ".bin"
 
+#define MEMORY_SIZE 65536  // 64 * 1024
+typedef unsigned short int _16_BIT;
+
+#include <fstream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -23,18 +28,28 @@ typedef enum errorCode {
 class Assembler {
     private:
         string msg;
+        string file_name;
+
+        // lines of codes
+        vector<vector<string>> codes;
+        // virtual memory
+        _16_BIT arr[MEMORY_SIZE];
+
+        void tokenize(string);
 
     public:
         Assembler();
+        Assembler(string);
+
+        void setFileName(string);
+        string getFileName();
 
         // compiler kernel & functions
         errorCode compiler(string);
-        vector<vector<string>> tokenize(string);
 
-        // create bin file
-        void saveFile(string);
+        bool saveFile();
 
-        // return the error msg (if ok the msg is ok)
+        // return the msg (Errors and status and ...)
         string getMsg();
 };
 
