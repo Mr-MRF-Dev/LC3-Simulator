@@ -73,3 +73,6 @@ build/
 # --------
 *.dll
 *.exe
+
+# IDE
+.vscode/

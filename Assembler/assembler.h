@@ -1,7 +1,12 @@
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
+// define keywords
+#define SPLIT_POINT '\n'
+#define COMMENT_CHAR ';'
+
 #include <string>
+#include <vector>
 using namespace std;
 
 typedef enum errorCode {
@@ -11,27 +16,24 @@ typedef enum errorCode {
     INVALID_CONSTANT, /* Illegal use of CONSTANT operand */
     OTHER_ERROR       /* All other errors */
 
-}errorCode;
+} errorCode;
 
+class Assembler {
+    private:
+        string msg;
 
+    public:
+        Assembler();
 
-class Assembler
-{
-private:
-    string msg;
+        // compiler kernel & functions
+        errorCode compiler(string);
+        vector<string> split(string);
 
+        // create bin file
+        void saveFile(string);
 
-public:
-    Assembler();
-
-    // compiler kernel
-    errorCode compiler(string*);
-
-    // create bin file
-    void saveFile(string);
-
-    // return the error msg (if ok the msg is ok)
-    string getMsg();
+        // return the error msg (if ok the msg is ok)
+        string getMsg();
 };
 
-#endif // ASSEMBLER_H
+#endif  // ASSEMBLER_H
