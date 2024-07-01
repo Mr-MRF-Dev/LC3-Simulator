@@ -1,41 +1,35 @@
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
-// define keywords
-#define SPLIT_SYMBOL '\n'
-#define COMMENT_SYMBOL ';'
-#define SPACE_SYMBOL ' '
-#define COMMA_SYMBOL ','
-#define BIN_FORMAT ".bin"
-
-#define MEMORY_SIZE 65536  // 64 * 1024
-typedef unsigned short int _16_BIT;
-
+// includes
+#include <algorithm>
 #include <fstream>
+#include <map>
 #include <string>
 #include <vector>
+
+#include "assembly.h"
 using namespace std;
-
-typedef enum errorCode {
-    OK_VALID,         /* No Error */
-    UNDEFINED_LABEL,  /* LABEL used without definition */
-    INVALID_OPCODE,   /* OPCODE doesn't exist in ISA */
-    INVALID_CONSTANT, /* Illegal use of CONSTANT operand */
-    OTHER_ERROR       /* All other errors */
-
-} errorCode;
 
 class Assembler {
     private:
+        Assembly ASB;
+
         string msg;
         string file_name;
 
         // lines of codes
         vector<vector<string>> codes;
+        map<string, _16_BIT> labels;
         // virtual memory
         _16_BIT arr[MEMORY_SIZE];
 
+        errorCode core();
+        errorCode createLabels();
         void tokenize(string);
+
+        void clear();
+        _16_BIT hexToInt(string);
 
     public:
         Assembler();
