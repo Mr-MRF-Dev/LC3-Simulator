@@ -54,29 +54,17 @@ errorCode Assembler::core() {
             continue;
         }
 
-        if (ASB.isOpcode(op_code)) {
+        _16_BIT res = 0;
+        // handle the code of line
+        errorCode lab = ASB.encode(&res, i, labels);
 
-            _16_BIT res = 0;
-            // handle the code of line
-            errorCode lab = ASB.encode(&res, i, labels);
+        if (lab != OK_VALID) {
 
-            if (lab != OK_VALID) {
-
-                msg = ASB.getMsg();
-                return lab;
-            }
-
-            arr[start_line] = res;
-
+            msg = ASB.getMsg();
+            return lab;
         }
 
-        else {
-            // invalid opcode
-            // TODO: fix the err msg
-            msg = "Error in codes: invalid opcode\n";
-            return INVALID_OPCODE;
-        }
-
+        arr[start_line] = res;
         start_line++;
     }
 

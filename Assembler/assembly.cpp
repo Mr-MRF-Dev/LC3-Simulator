@@ -33,14 +33,18 @@ bool Assembly::isORG(string str) { return (str == assembly_label.front()); }
 errorCode Assembly::encode(_16_BIT* src, vector<string> code,
                            map<string, _16_BIT>& labels) {
 
-    return OK_VALID;
+    if (!isOpcode(code.front())) {
+        msg = "Error in codes: invalid opcode\n";
+        return INVALID_OPCODE;
+    }
+
     return OK_VALID;
 }
 
 _16_BIT Assembly::ADD(vector<string> vec) {
 
     return OK_VALID;
-    return OK_VALID;
+    return OTHER_ERROR;
 }
 
 // EOF
