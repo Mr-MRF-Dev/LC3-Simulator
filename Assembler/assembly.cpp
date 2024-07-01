@@ -14,8 +14,8 @@ Assembly::Assembly() : msg("OK!") {
                        { "RTI", 0x8000 }, { "ST", 0x3000 },  { "STR", 0x7000 },
                        { "TRAP", 0xf000 } };
 
-    register_codes = { { "R0", 0 }, { "R1", 1 }, { "R2", 2 }, { "R3", 3 },
-                       { "R4", 4 }, { "R5", 5 }, { "R6", 6 }, { "R7", 7 } };
+    REGs = { { "R0", 0 }, { "R1", 1 }, { "R2", 2 }, { "R3", 3 },
+             { "R4", 4 }, { "R5", 5 }, { "R6", 6 }, { "R7", 7 } };
 }
 
 bool Assembly::isOpcode(string op_code) {
@@ -33,18 +33,60 @@ bool Assembly::isORG(string str) { return (str == assembly_label.front()); }
 errorCode Assembly::encode(_16_BIT* src, vector<string> code,
                            map<string, _16_BIT>& labels) {
 
-    if (!isOpcode(code.front())) {
+    string front = code.front();
+
+    if (!isOpcode(front)) {
         msg = "Error in codes: invalid opcode\n";
         return INVALID_OPCODE;
+    }
+
+    if (front == "ADD") {
+        return ADD(src, code);
     }
 
     return OK_VALID;
 }
 
-_16_BIT Assembly::ADD(vector<string> vec) {
+errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
+
+    // s_dr = vec[1]
+    // s_sr1 = vec[2]
+    // s_sr2 = vec[3]
+
+    // ADD  DR  SR1 0 00 SR2
+    // 0001 000 000 0 00 000
+    //// 0001 000 000 1 00000
+    *final = 0x1000;
+    _16_BIT dr, sr1, sr2;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error Add: bad DR\n";
+        return INVALID_REG;
+    }
+
+    dr = REGs[vec[1]];
+
+    if (REGs.find(vec[2]) == REGs.end()) {
+        msg = "Error Add: bad SR1\n";
+        return INVALID_REG;
+    }
+
+    sr1 = REGs[vec[2]];
+
+    if (REGs.find(vec[3]) == REGs.end()) {
+        msg = "Error Add: bad SR3\n";
+        return INVALID_REG;
+    }
+
+    sr2 = REGs[vec[3]];
+
+    *final += sr2;
+    sr1 <<= 6;
+    *final += sr1;
+    dr <<= 9;
+    *final += dr;
 
     return OK_VALID;
-    return OTHER_ERROR;
 }
 
 // EOF

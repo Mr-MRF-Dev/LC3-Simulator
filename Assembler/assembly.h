@@ -20,6 +20,7 @@ typedef enum errorCode {
     INVALID_OPCODE,   /* OPCODE doesn't exist in ISA */
     INVALID_CONSTANT, /* Illegal use of CONSTANT operand */
     INVALID_ORG,      /* when the org number is invalid */
+    INVALID_REG,      /* invalid register used */
     OTHER_ERROR       /* All other errors */
 
 } errorCode;
@@ -37,16 +38,18 @@ class Assembly {
 
         vector<string> assembly_label;
         map<string, _16_BIT> assembly_codes;
-        map<string, _16_BIT> register_codes;
+        map<string, _16_BIT> REGs;
 
-        _16_BIT ADD(vector<string>);
+        // errorCode convertNumberFormmat(_16_BIT*, string);
+
+        errorCode ADD(_16_BIT *, vector<string>);
 
     public:
         Assembly();
         bool isOpcode(string);
         bool isORG(string);
 
-        errorCode encode(_16_BIT*, vector<string>, map<string, _16_BIT>&);
+        errorCode encode(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         string getMsg();
 };
 
