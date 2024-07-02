@@ -27,6 +27,7 @@ typedef enum errorCode {
 } errorCode;
 
 // includes
+#include <iostream>
 #include <algorithm>
 #include <map>
 #include <string>
@@ -41,15 +42,16 @@ class Assembly {
         map<string, _16_BIT> assembly_codes;
         map<string, _16_BIT> REGs;
 
-        errorCode convertNumberFormmat(_16_BIT *, string);
 
         errorCode ADD(_16_BIT *, vector<string>);
+        // errorCode AND(_16_BIT *, vector<string>);
 
     public:
         Assembly();
         bool isOpcode(string);
         bool isORG(string);
 
+        errorCode convertNumberFormat(int *, string);
         errorCode encode(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         string getMsg();
 };

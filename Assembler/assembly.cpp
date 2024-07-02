@@ -78,8 +78,8 @@ errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
 
     if (REGs.find(vec[3]) == REGs.end()) {
 
-        _16_BIT imm5;
-        errorCode lab = convertNumberFormmat(&imm5, vec[3]);
+        int imm5;
+        errorCode lab = convertNumberFormat(&imm5, vec[3]);
 
         if (lab != OK_VALID) {
             return lab;
@@ -88,6 +88,7 @@ errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
         // set the flag
         *final += 32;  // 1 00000
 
+        // shfit the 5 bit of imm5 into final
         for (int i = 0; i < 5; i++, imm5 >>= 1) {
 
             if (imm5 % 2 != 0) {
@@ -114,21 +115,39 @@ errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
     return OK_VALID;
 }
 
-errorCode Assembly::convertNumberFormmat(_16_BIT* num, string str) {
+// errorCode Assembly::AND(_16_BIT* final, vector<string> vec) {}
 
-    if (str.front() != '#') {
+errorCode Assembly::convertNumberFormat(int* num, string str) {
+
+    char begin_char = str.front();
+    str.erase(str.begin());  // remove begin char
+
+    int mabna;
+
+    if (begin_char == '#') {
+        mabna = 10;
+    }
+
+    else if (begin_char == 'b' || begin_char == 'B') {
+        mabna = 2;
+
+    }
+
+    else if (begin_char == 'x' || begin_char == 'X') {
+        mabna = 16;
+    }
+
+    else {
         msg = "Error: invalid number\n";
         return INVALID_CONSTANT;
     }
 
-    str.erase(str.begin());  // remove #
-
     try {
-        *num = stoi(str, 0, 10);
+        *num = stoi(str, 0, mabna);
     }
 
     catch (exception& e) {
-        msg = "Error: invalid number\n";
+        msg = string("Error: invalid number\n\n") + e.what();
         return INVALID_CONSTANT;
     }
 
