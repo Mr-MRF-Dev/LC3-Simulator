@@ -50,7 +50,16 @@ errorCode Assembler::core() {
         // ORG op code
         if (ASB.isORG(op_code)) {
             // convert hex to int for word address
-            start_line = hexToInt(i[1]);
+            // start_line = hexToInt(i[1]);
+            errorCode lab = ASB.convertNumberFormat(&start_line, i[1]);
+
+            if (lab != OK_VALID) {
+                // TODO: fix the err msg
+                msg = string("Error in convert hex to int in org in core\n\n") +
+                      ASB.getMsg();
+                return lab;
+            }
+
             continue;
         }
 
@@ -69,13 +78,6 @@ errorCode Assembler::core() {
     }
 
     return OK_VALID;
-}
-
-_16_BIT Assembler::hexToInt(string str) {
-
-    // xa => int = 10
-    str.erase(str.begin());  // remove x
-    return stoi(str, 0, 16);
 }
 
 /*
@@ -186,24 +188,22 @@ errorCode Assembler::createLabels() {
         string first = i.front();
 
         if (ASB.isORG(first)) {
-            try {
-                // convert hex to int for word address
-                start_line = hexToInt(i[1]);
+            // convert hex to int for word address
+            errorCode lab = ASB.convertNumberFormat(&start_line, i[1]);
 
-                if (start_line < 0 or start_line >= MEMORY_SIZE) {
-
-                    // TODO: fix the err msg
-                    msg = "Error in number if org, out of range\n";
-                    return INVALID_ORG;
-                }
-
+            if (lab != OK_VALID) {
+                // TODO: fix the err msg
+                msg = string("Error in convert hex to int in org\n\n") +
+                      ASB.getMsg();
+                return lab;
             }
 
-            catch (const std::exception &e) {
+            lab = ASB.orgRange(start_line);
+
+            if (lab != OK_VALID) {
                 // TODO: fix the err msg
-                msg =
-                    string("Error in convert hex to int in org\n\n") + e.what();
-                return INVALID_ORG;
+                msg = ASB.getMsg();
+                return lab;
             }
 
             continue;

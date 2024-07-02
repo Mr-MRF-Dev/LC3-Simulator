@@ -19,6 +19,7 @@ typedef enum errorCode {
     INVALID_LABEL,       /* Duplicate label used */
     INVALID_OPCODE,      /* OPCODE doesn't exist in ISA */
     INVALID_CONSTANT,    /* Illegal use of CONSTANT operand */
+    INVALID_NUMBER,      /* invalid number format */
     NUMBER_OUT_OF_RANGE, /* when number out of range */
     INVALID_ORG,         /* when the org number is invalid */
     INVALID_REG,         /* invalid register used */
@@ -27,8 +28,8 @@ typedef enum errorCode {
 } errorCode;
 
 // includes
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
@@ -42,7 +43,6 @@ class Assembly {
         map<string, _16_BIT> assembly_codes;
         map<string, _16_BIT> REGs;
 
-
         errorCode ADD(_16_BIT *, vector<string>);
         // errorCode AND(_16_BIT *, vector<string>);
 
@@ -51,7 +51,10 @@ class Assembly {
         bool isOpcode(string);
         bool isORG(string);
 
+        errorCode imm5Range(int);
+        errorCode orgRange(int);
         errorCode convertNumberFormat(int *, string);
+        
         errorCode encode(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         string getMsg();
 };

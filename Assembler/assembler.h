@@ -29,7 +29,6 @@ class Assembler {
         void tokenize(string);
 
         void clear();
-        _16_BIT hexToInt(string);
 
     public:
         Assembler();

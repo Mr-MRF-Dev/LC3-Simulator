@@ -85,6 +85,12 @@ errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
             return lab;
         }
 
+        lab = imm5Range(imm5);
+
+        if (lab != OK_VALID) {
+            return lab;
+        }
+
         // set the flag
         *final += 32;  // 1 00000
 
@@ -139,7 +145,7 @@ errorCode Assembly::convertNumberFormat(int* num, string str) {
 
     else {
         msg = "Error: invalid number\n";
-        return INVALID_CONSTANT;
+        return INVALID_NUMBER;
     }
 
     try {
@@ -148,11 +154,30 @@ errorCode Assembly::convertNumberFormat(int* num, string str) {
 
     catch (exception& e) {
         msg = string("Error: invalid number\n\n") + e.what();
-        return INVALID_CONSTANT;
+        return INVALID_NUMBER;
     }
 
-    if (*num > 16 || *num <= -16) {
+    return OK_VALID;
+}
+
+errorCode Assembly::imm5Range(int num) {
+
+    // imm5 / 5 bit ~ 31 number
+    // p 15 & n 16
+
+    if (num > 16 || num <= -16) {
         msg = "Error Number: out of range\n";
+        return NUMBER_OUT_OF_RANGE;
+    }
+
+    return OK_VALID;
+}
+
+errorCode Assembly::orgRange(int num) {
+
+    if (num < 0 or num >= MEMORY_SIZE) {
+
+        msg = "Error in number if org, out of range\n";
         return NUMBER_OUT_OF_RANGE;
     }
 
