@@ -49,13 +49,16 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
 
 errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
 
-    // s_dr = vec[1]
-    // s_sr1 = vec[2]
-    // s_sr2 = vec[3]
+    // dr = vec[1]
+    // sr1 = vec[2]
+    // sr2 = vec[3]
 
     // ADD  DR  SR1 0 00 SR2
     // 0001 000 000 0 00 000
-    //// 0001 000 000 1 00000
+
+    // ADD  DR  SR1 1 imm5
+    // 0001 000 000 1 00000
+
     *final = 0x1000;
     _16_BIT dr, sr1, sr2;
 
@@ -74,17 +77,65 @@ errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
     sr1 = REGs[vec[2]];
 
     if (REGs.find(vec[3]) == REGs.end()) {
-        msg = "Error Add: bad SR3\n";
-        return INVALID_REG;
+
+        _16_BIT imm5;
+        errorCode lab = convertNumberFormmat(&imm5, vec[3]);
+
+        if (lab != OK_VALID) {
+            return lab;
+        }
+
+        // set the flag
+        *final += 32;  // 1 00000
+
+        for (int i = 0; i < 5; i++, imm5 >>= 1) {
+
+            if (imm5 % 2 != 0) {
+                _16_BIT tmp = 1;
+                tmp <<= i;
+                *final += tmp;
+            }
+        }
+
     }
 
-    sr2 = REGs[vec[3]];
+    else {
+        // set the sr2
+        sr2 = REGs[vec[3]];
+        *final += sr2;
+    }
 
-    *final += sr2;
+    // set the sr1 and dr
     sr1 <<= 6;
     *final += sr1;
     dr <<= 9;
     *final += dr;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::convertNumberFormmat(_16_BIT* num, string str) {
+
+    if (str.front() != '#') {
+        msg = "Error: invalid number\n";
+        return INVALID_CONSTANT;
+    }
+
+    str.erase(str.begin());  // remove #
+
+    try {
+        *num = stoi(str, 0, 10);
+    }
+
+    catch (exception& e) {
+        msg = "Error: invalid number\n";
+        return INVALID_CONSTANT;
+    }
+
+    if (*num > 16 || *num <= -16) {
+        msg = "Error Number: out of range\n";
+        return NUMBER_OUT_OF_RANGE;
+    }
 
     return OK_VALID;
 }

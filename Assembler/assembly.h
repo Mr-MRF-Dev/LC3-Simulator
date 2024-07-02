@@ -14,14 +14,15 @@ typedef unsigned short int _16_BIT;  // 2 Byte ~ 16 bit
 
 // type of Errors
 typedef enum errorCode {
-    OK_VALID,         /* No Error */
-    UNDEFINED_LABEL,  /* LABEL used without definition */
-    INVALID_LABEL,    /* Duplicate label used */
-    INVALID_OPCODE,   /* OPCODE doesn't exist in ISA */
-    INVALID_CONSTANT, /* Illegal use of CONSTANT operand */
-    INVALID_ORG,      /* when the org number is invalid */
-    INVALID_REG,      /* invalid register used */
-    OTHER_ERROR       /* All other errors */
+    OK_VALID,            /* No Error */
+    UNDEFINED_LABEL,     /* LABEL used without definition */
+    INVALID_LABEL,       /* Duplicate label used */
+    INVALID_OPCODE,      /* OPCODE doesn't exist in ISA */
+    INVALID_CONSTANT,    /* Illegal use of CONSTANT operand */
+    NUMBER_OUT_OF_RANGE, /* when number out of range */
+    INVALID_ORG,         /* when the org number is invalid */
+    INVALID_REG,         /* invalid register used */
+    OTHER_ERROR          /* All other errors */
 
 } errorCode;
 
@@ -40,7 +41,7 @@ class Assembly {
         map<string, _16_BIT> assembly_codes;
         map<string, _16_BIT> REGs;
 
-        // errorCode convertNumberFormmat(_16_BIT*, string);
+        errorCode convertNumberFormmat(_16_BIT *, string);
 
         errorCode ADD(_16_BIT *, vector<string>);
 
