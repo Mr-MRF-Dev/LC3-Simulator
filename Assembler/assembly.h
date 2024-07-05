@@ -48,6 +48,7 @@ class Assembly {
         errorCode AND(_16_BIT *, vector<string>);
         errorCode NOT(_16_BIT *, vector<string>);
         errorCode LD(_16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode LDI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
 
     public:
         Assembly();

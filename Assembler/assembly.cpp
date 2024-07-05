@@ -270,6 +270,44 @@ errorCode Assembly::LD(_16_BIT* final, vector<string> vec,
     return OK_VALID;
 }
 
+errorCode Assembly::LDI(_16_BIT* final, vector<string> vec,
+                        map<string, _16_BIT>& labels) {
+
+    // LDI  DR  PCoffest9
+    // 1010 000 111111111
+
+    *final = assembly_codes["LDI"];
+    _16_BIT dr, pcoff;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error Ldi: bad DR\n";
+        return INVALID_REG;
+    }
+
+    dr = REGs[vec[1]];
+
+    if (labels.find(vec[2]) == labels.end()) {
+        msg = "Error ldi: bad label not found\n";
+        return INVALID_REG;
+    }
+
+    pcoff = labels[vec[2]];
+
+    errorCode lab = pCoffest9Range(pcoff);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    *final += pcoff;  // 111 111 111
+
+    // set the dr
+    dr <<= 9;
+    *final += dr;
+
+    return OK_VALID;
+}
+
 errorCode Assembly::convertNumberFormat(int* num, string str) {
 
     char begin_char = str.front();
