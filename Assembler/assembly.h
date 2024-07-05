@@ -10,6 +10,7 @@
 #define DEFAULT_FILE_NAME "memory"
 
 #define MEMORY_SIZE 65536            // 64 * 1024
+#define PROGRAM_BORDER 0xFE00        // start I/O memory
 typedef unsigned short int _16_BIT;  // 2 Byte ~ 16 bit
 
 // type of Errors
@@ -46,6 +47,7 @@ class Assembly {
         errorCode ADD(_16_BIT *, vector<string>);
         errorCode AND(_16_BIT *, vector<string>);
         errorCode NOT(_16_BIT *, vector<string>);
+        errorCode LD(_16_BIT *, vector<string>, map<string, _16_BIT> &);
 
     public:
         Assembly();
@@ -54,8 +56,9 @@ class Assembly {
 
         errorCode imm5Range(int);
         errorCode orgRange(int);
+        errorCode pCoffest9Range(int);
         errorCode convertNumberFormat(int *, string);
-        
+
         errorCode encode(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         string getMsg();
 };

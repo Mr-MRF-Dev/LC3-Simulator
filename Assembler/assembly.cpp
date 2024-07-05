@@ -4,8 +4,8 @@ string Assembly::getMsg() { return msg; }
 
 Assembly::Assembly() : msg("OK!") {
     assembly_labels = { "ORG",  "ADD", "AND", "BR",  "JMP", "JSR",
-                       "JSRR", "LD",  "LDI", "LDR", "LEA", "NOT",
-                       "RET",  "RTI", "ST",  "STR", "TRAP" };
+                        "JSRR", "LD",  "LDI", "LDR", "LEA", "NOT",
+                        "RET",  "RTI", "ST",  "STR", "TRAP" };
 
     assembly_codes = { { "ADD", 0x1000 }, { "AND", 0x5000 }, { "BR", 0x0000 },
                        { "JMP", 0xc000 }, { "JSR", 0x4000 }, { "JSRR", 0x4000 },
@@ -35,11 +35,6 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
 
     string front = code.front();
 
-    if (!isOpcode(front)) {
-        msg = "Error in codes: invalid opcode\n";
-        return INVALID_OPCODE;
-    }
-
     if (front == "ADD") {
         return ADD(src, code);
     }
@@ -52,7 +47,12 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
         return NOT(src, code);
     }
 
-    return OTHER_ERROR;
+    else if (front == "LD") {
+        return LD(src, code, labels);
+    }
+
+    msg = "Error in codes: invalid opcode\n";
+    return INVALID_OPCODE;
 }
 
 errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
@@ -220,12 +220,50 @@ errorCode Assembly::NOT(_16_BIT* final, vector<string> vec) {
     }
 
     sr1 = REGs[vec[2]];
-    
-    *final += 63; // 1 11111
+
+    *final += 63;  // 1 11111
 
     // set the sr1 and dr
     sr1 <<= 6;
     *final += sr1;
+    dr <<= 9;
+    *final += dr;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::LD(_16_BIT* final, vector<string> vec,
+                       map<string, _16_BIT>& labels) {
+
+    // LD   DR  PCoffest9
+    // 0010 000 111111111
+
+    *final = assembly_codes["LD"];
+    _16_BIT dr, pcoff;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error Ld: bad DR\n";
+        return INVALID_REG;
+    }
+
+    dr = REGs[vec[1]];
+
+    if (labels.find(vec[2]) == labels.end()) {
+        msg = "Error ld: bad label not found\n";
+        return INVALID_REG;
+    }
+
+    pcoff = labels[vec[2]];
+
+    errorCode lab = pCoffest9Range(pcoff);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    *final += pcoff;  // 111 111 111
+
+    // set the dr
     dr <<= 9;
     *final += dr;
 
@@ -284,9 +322,20 @@ errorCode Assembly::imm5Range(int num) {
 
 errorCode Assembly::orgRange(int num) {
 
-    if (num < 0 or num >= MEMORY_SIZE) {
+    if (num < 0 or num >= PROGRAM_BORDER) {
 
-        msg = "Error in number if org, out of range\n";
+        msg = "Error in number org, out of range\n";
+        return NUMBER_OUT_OF_RANGE;
+    }
+
+    return OK_VALID;
+}
+
+errorCode Assembly::pCoffest9Range(int num) {
+
+    if (num < 0 or num >= PROGRAM_BORDER) {
+
+        msg = "Error in number PCoffest9, out of range\n";
         return NUMBER_OUT_OF_RANGE;
     }
 
