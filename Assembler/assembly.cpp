@@ -3,7 +3,7 @@
 string Assembly::getMsg() { return msg; }
 
 Assembly::Assembly() : msg("OK!") {
-    assembly_label = { "ORG",  "ADD", "AND", "BR",  "JMP", "JSR",
+    assembly_labels = { "ORG",  "ADD", "AND", "BR",  "JMP", "JSR",
                        "JSRR", "LD",  "LDI", "LDR", "LEA", "NOT",
                        "RET",  "RTI", "ST",  "STR", "TRAP" };
 
@@ -20,15 +20,15 @@ Assembly::Assembly() : msg("OK!") {
 
 bool Assembly::isOpcode(string op_code) {
 
-    if (find(assembly_label.begin(), assembly_label.end(), op_code) !=
-        assembly_label.end()) {
+    if (find(assembly_labels.begin(), assembly_labels.end(), op_code) !=
+        assembly_labels.end()) {
         return true;
     }
 
     return false;
 }
 
-bool Assembly::isORG(string str) { return (str == assembly_label.front()); }
+bool Assembly::isORG(string str) { return (str == assembly_labels.front()); }
 
 errorCode Assembly::encode(_16_BIT* src, vector<string> code,
                            map<string, _16_BIT>& labels) {
@@ -46,6 +46,10 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
 
     else if (front == "AND") {
         return AND(src, code);
+    }
+
+    else if (front == "NOT") {
+        return NOT(src, code);
     }
 
     return OTHER_ERROR;
@@ -128,10 +132,10 @@ errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
 errorCode Assembly::AND(_16_BIT* final, vector<string> vec) {
 
     // AND  DR  SR1 0 00 SR2
-    // 0001 000 000 0 00 000
+    // 0101 000 000 0 00 000
 
     // AND  DR  SR1 1 imm5
-    // 0001 000 000 1 00000
+    // 0101 000 000 1 00000
 
     *final = assembly_codes["AND"];
     _16_BIT dr, sr1, sr2;
@@ -185,6 +189,39 @@ errorCode Assembly::AND(_16_BIT* final, vector<string> vec) {
         sr2 = REGs[vec[3]];
         *final += sr2;
     }
+
+    // set the sr1 and dr
+    sr1 <<= 6;
+    *final += sr1;
+    dr <<= 9;
+    *final += dr;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::NOT(_16_BIT* final, vector<string> vec) {
+
+    // NOT  DR  SR1
+    // 1001 000 000 1 11111
+
+    *final = assembly_codes["NOT"];
+    _16_BIT dr, sr1;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error Not: bad DR\n";
+        return INVALID_REG;
+    }
+
+    dr = REGs[vec[1]];
+
+    if (REGs.find(vec[2]) == REGs.end()) {
+        msg = "Error Not: bad SR1\n";
+        return INVALID_REG;
+    }
+
+    sr1 = REGs[vec[2]];
+    
+    *final += 63; // 1 11111
 
     // set the sr1 and dr
     sr1 <<= 6;

@@ -39,12 +39,13 @@ class Assembly {
     private:
         string msg;
 
-        vector<string> assembly_label;
+        vector<string> assembly_labels;
         map<string, _16_BIT> assembly_codes;
         map<string, _16_BIT> REGs;
 
         errorCode ADD(_16_BIT *, vector<string>);
         errorCode AND(_16_BIT *, vector<string>);
+        errorCode NOT(_16_BIT *, vector<string>);
 
     public:
         Assembly();
