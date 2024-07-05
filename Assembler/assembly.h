@@ -44,7 +44,7 @@ class Assembly {
         map<string, _16_BIT> REGs;
 
         errorCode ADD(_16_BIT *, vector<string>);
-        // errorCode AND(_16_BIT *, vector<string>);
+        errorCode AND(_16_BIT *, vector<string>);
 
     public:
         Assembly();

@@ -44,7 +44,11 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
         return ADD(src, code);
     }
 
-    return OK_VALID;
+    else if (front == "AND") {
+        return AND(src, code);
+    }
+
+    return OTHER_ERROR;
 }
 
 errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
@@ -59,7 +63,7 @@ errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
     // ADD  DR  SR1 1 imm5
     // 0001 000 000 1 00000
 
-    *final = 0x1000;
+    *final = assembly_codes["ADD"];
     _16_BIT dr, sr1, sr2;
 
     if (REGs.find(vec[1]) == REGs.end()) {
@@ -121,7 +125,75 @@ errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
     return OK_VALID;
 }
 
-// errorCode Assembly::AND(_16_BIT* final, vector<string> vec) {}
+errorCode Assembly::AND(_16_BIT* final, vector<string> vec) {
+
+    // AND  DR  SR1 0 00 SR2
+    // 0001 000 000 0 00 000
+
+    // AND  DR  SR1 1 imm5
+    // 0001 000 000 1 00000
+
+    *final = assembly_codes["AND"];
+    _16_BIT dr, sr1, sr2;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error And: bad DR\n";
+        return INVALID_REG;
+    }
+
+    dr = REGs[vec[1]];
+
+    if (REGs.find(vec[2]) == REGs.end()) {
+        msg = "Error And: bad SR1\n";
+        return INVALID_REG;
+    }
+
+    sr1 = REGs[vec[2]];
+
+    if (REGs.find(vec[3]) == REGs.end()) {
+
+        int imm5;
+        errorCode lab = convertNumberFormat(&imm5, vec[3]);
+
+        if (lab != OK_VALID) {
+            return lab;
+        }
+
+        lab = imm5Range(imm5);
+
+        if (lab != OK_VALID) {
+            return lab;
+        }
+
+        // set the flag
+        *final += 32;  // 1 00000
+
+        // shfit the 5 bit of imm5 into final
+        for (int i = 0; i < 5; i++, imm5 >>= 1) {
+
+            if (imm5 % 2 != 0) {
+                _16_BIT tmp = 1;
+                tmp <<= i;
+                *final += tmp;
+            }
+        }
+
+    }
+
+    else {
+        // set the sr2
+        sr2 = REGs[vec[3]];
+        *final += sr2;
+    }
+
+    // set the sr1 and dr
+    sr1 <<= 6;
+    *final += sr1;
+    dr <<= 9;
+    *final += dr;
+
+    return OK_VALID;
+}
 
 errorCode Assembly::convertNumberFormat(int* num, string str) {
 
