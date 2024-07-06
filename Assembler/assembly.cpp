@@ -87,6 +87,14 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
         return RET(src, code);
     }
 
+    else if (front == "JSR") {
+        return JSR(src, code, labels);
+    }
+
+    else if (front == "JSRR") {
+        return JSRR(src, code);
+    }
+
     msg = "Error in codes: invalid opcode\n";
     return INVALID_OPCODE;
 }
@@ -647,6 +655,53 @@ errorCode Assembly::RET(_16_BIT* final, vector<string> vec) {
     _16_BIT baseR = REGs["R7"];
 
     // set the reg
+    baseR <<= 6;
+    *final += baseR;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::JSR(_16_BIT* final, vector<string> vec,
+                        map<string, _16_BIT>& labels) {
+
+    // JSR    PCoffset11
+    // 0100 1 00000000000
+
+    _16_BIT pcoff;
+
+    *final = assembly_codes["JSR"];
+
+    if (labels.find(vec[1]) == labels.end()) {
+        msg = "Error jsr: bad label not found\n";
+        return INVALID_LABEL;
+    }
+
+    pcoff = labels[vec[1]];
+    *final += pcoff;
+
+    _16_BIT flag = 1;
+    flag <<= 11;
+    *final += flag;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::JSRR(_16_BIT* final, vector<string> vec) {
+
+    // JSRR      baseR
+    // 0100 0 00 000 000000
+
+    _16_BIT baseR;
+
+    *final = assembly_codes["JSRR"];
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error JSRR: bad reg not found\n";
+        return INVALID_REG;
+    }
+
+    baseR = REGs[vec[1]];
+
     baseR <<= 6;
     *final += baseR;
 
