@@ -56,6 +56,8 @@ class Assembly {
         errorCode STI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode STR(_16_BIT *, vector<string>);
         errorCode BR(_16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode JMP(_16_BIT *, vector<string>);
+        errorCode RET(_16_BIT *, vector<string>);
 
         void shiftCopy(_16_BIT *, int, int);
 

@@ -79,6 +79,14 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
         return BR(src, code, labels);
     }
 
+    else if (front == "JMP") {
+        return JMP(src, code);
+    }
+
+    else if (front == "RET") {
+        return RET(src, code);
+    }
+
     msg = "Error in codes: invalid opcode\n";
     return INVALID_OPCODE;
 }
@@ -604,6 +612,43 @@ errorCode Assembly::BR(_16_BIT* final, vector<string> vec,
     *final += z;
     n <<= 11;
     *final += n;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::JMP(_16_BIT* final, vector<string> vec) {
+
+    // JMP      baseR
+    // 1100 000 000 000000
+
+    *final = assembly_codes["JMP"];
+    _16_BIT baseR;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error JMP: bad reg not found\n";
+        return INVALID_REG;
+    }
+
+    baseR = REGs[vec[1]];
+
+    // set the reg
+    baseR <<= 6;
+    *final += baseR;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::RET(_16_BIT* final, vector<string> vec) {
+
+    // JMP      D7
+    // 1100 000 111 000000
+
+    *final = assembly_codes["JMP"];
+    _16_BIT baseR = REGs["R7"];
+
+    // set the reg
+    baseR <<= 6;
+    *final += baseR;
 
     return OK_VALID;
 }
