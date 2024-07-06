@@ -53,6 +53,7 @@ class Assembly {
         errorCode LEA(_16_BIT *, vector<string>, map<string, _16_BIT>&);
         errorCode ST(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode STI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode STR(_16_BIT *, vector<string>);
 
         void shiftCopy(_16_BIT *, int, int);
 

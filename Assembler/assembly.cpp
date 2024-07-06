@@ -439,7 +439,7 @@ errorCode Assembly::ST(_16_BIT* final, vector<string> vec,
 }
 
 errorCode Assembly::STI(_16_BIT* final, vector<string> vec,
-                       map<string, _16_BIT>& labels) {
+                        map<string, _16_BIT>& labels) {
 
     // STI   DR  PCoffest9
     // 1011 000 111111111
@@ -472,6 +472,52 @@ errorCode Assembly::STI(_16_BIT* final, vector<string> vec,
     // shiftCopy(final, pcoff, 9);
 
     // set the dr
+    dr <<= 9;
+    *final += dr;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::STR(_16_BIT* final, vector<string> vec) {
+
+    // STR  DR  baseR offest6
+    // 0111 000 111   111111
+
+    *final = assembly_codes["STR"];
+    _16_BIT dr, baseR;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error STR: bad DR\n";
+        return INVALID_REG;
+    }
+
+    dr = REGs[vec[1]];
+
+    if (REGs.find(vec[2]) == REGs.end()) {
+        msg = "Error STR: bad baseR\n";
+        return INVALID_REG;
+    }
+
+    baseR = REGs[vec[2]];
+
+    int off;
+    errorCode lab = convertNumberFormat(&off, vec[3]);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    lab = offest6Range(off);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    *final += off;
+
+    // set the dr
+    baseR <<= 6;
+    *final += baseR;
     dr <<= 9;
     *final += dr;
 
