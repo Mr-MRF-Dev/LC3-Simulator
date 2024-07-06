@@ -50,6 +50,8 @@ class Assembly {
         errorCode LD(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode LDI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
 
+        void shiftCopy(_16_BIT *, int, int);
+
     public:
         Assembly();
         bool isOpcode(string);

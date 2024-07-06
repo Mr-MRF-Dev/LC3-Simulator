@@ -103,15 +103,7 @@ errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
         *final += 32;  // 1 00000
 
         // shfit the 5 bit of imm5 into final
-        for (int i = 0; i < 5; i++, imm5 >>= 1) {
-
-            if (imm5 % 2 != 0) {
-                _16_BIT tmp = 1;
-                tmp <<= i;
-                *final += tmp;
-            }
-        }
-
+        shiftCopy(final, imm5, 5);
     }
 
     else {
@@ -173,15 +165,7 @@ errorCode Assembly::AND(_16_BIT* final, vector<string> vec) {
         *final += 32;  // 1 00000
 
         // shfit the 5 bit of imm5 into final
-        for (int i = 0; i < 5; i++, imm5 >>= 1) {
-
-            if (imm5 % 2 != 0) {
-                _16_BIT tmp = 1;
-                tmp <<= i;
-                *final += tmp;
-            }
-        }
-
+        shiftCopy(final, imm5, 5);
     }
 
     else {
@@ -262,6 +246,8 @@ errorCode Assembly::LD(_16_BIT* final, vector<string> vec,
     }
 
     *final += pcoff;  // 111 111 111
+    // or use shiftCopy
+    // shiftCopy(final, pcoff, 9);
 
     // set the dr
     dr <<= 9;
@@ -378,6 +364,18 @@ errorCode Assembly::pCoffest9Range(int num) {
     }
 
     return OK_VALID;
+}
+
+void Assembly::shiftCopy(_16_BIT* final, int num, int count) {
+
+    for (int i = 0; i < count; i++, num >>= 1) {
+
+        if (num % 2 != 0) {
+            _16_BIT tmp = 1;
+            tmp <<= i;
+            *final += tmp;
+        }
+    }
 }
 
 // EOF
