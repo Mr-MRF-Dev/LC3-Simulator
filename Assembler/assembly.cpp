@@ -63,6 +63,14 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
         return LEA(src, code, labels);
     }
 
+    else if (front == "ST") {
+        return ST(src, code, labels);
+    }
+
+    else if (front == "STI") {
+        return STI(src, code, labels);
+    }
+
     msg = "Error in codes: invalid opcode\n";
     return INVALID_OPCODE;
 }
@@ -408,6 +416,46 @@ errorCode Assembly::ST(_16_BIT* final, vector<string> vec,
 
     if (labels.find(vec[2]) == labels.end()) {
         msg = "Error St: bad label not found\n";
+        return INVALID_LABEL;
+    }
+
+    pcoff = labels[vec[2]];
+
+    errorCode lab = PCoffest9Range(pcoff);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    *final += pcoff;  // 111 111 111
+    // or use shiftCopy
+    // shiftCopy(final, pcoff, 9);
+
+    // set the dr
+    dr <<= 9;
+    *final += dr;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::STI(_16_BIT* final, vector<string> vec,
+                       map<string, _16_BIT>& labels) {
+
+    // STI   DR  PCoffest9
+    // 1011 000 111111111
+
+    *final = assembly_codes["STI"];
+    _16_BIT dr, pcoff;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error Sti: bad DR\n";
+        return INVALID_REG;
+    }
+
+    dr = REGs[vec[1]];
+
+    if (labels.find(vec[2]) == labels.end()) {
+        msg = "Error Sti: bad label not found\n";
         return INVALID_LABEL;
     }
 
