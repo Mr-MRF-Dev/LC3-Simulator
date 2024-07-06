@@ -640,10 +640,10 @@ errorCode Assembly::JMP(_16_BIT* final, vector<string> vec) {
 
 errorCode Assembly::RET(_16_BIT* final, vector<string> vec) {
 
-    // JMP      D7
+    // RET      D7
     // 1100 000 111 000000
 
-    *final = assembly_codes["JMP"];
+    *final = assembly_codes["RET"];
     _16_BIT baseR = REGs["R7"];
 
     // set the reg
