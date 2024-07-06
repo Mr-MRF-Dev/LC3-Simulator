@@ -239,7 +239,7 @@ errorCode Assembly::LD(_16_BIT* final, vector<string> vec,
 
     pcoff = labels[vec[2]];
 
-    errorCode lab = pCoffest9Range(pcoff);
+    errorCode lab = PCoffest9Range(pcoff);
 
     if (lab != OK_VALID) {
         return lab;
@@ -279,7 +279,7 @@ errorCode Assembly::LDI(_16_BIT* final, vector<string> vec,
 
     pcoff = labels[vec[2]];
 
-    errorCode lab = pCoffest9Range(pcoff);
+    errorCode lab = PCoffest9Range(pcoff);
 
     if (lab != OK_VALID) {
         return lab;
@@ -288,6 +288,53 @@ errorCode Assembly::LDI(_16_BIT* final, vector<string> vec,
     *final += pcoff;  // 111 111 111
 
     // set the dr
+    dr <<= 9;
+    *final += dr;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::LDR(_16_BIT* final, vector<string> vec,
+                        map<string, _16_BIT>& labels) {
+
+    // LDI  DR  baser offest6
+    // 1010 000 111   111111
+
+    *final = assembly_codes["LDI"];
+    _16_BIT dr, baseR;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error Ldr: bad DR\n";
+        return INVALID_REG;
+    }
+
+    dr = REGs[vec[1]];
+
+    if (REGs.find(vec[2]) == REGs.end()) {
+        msg = "Error Ldr: bad baseR\n";
+        return INVALID_REG;
+    }
+
+    baseR = REGs[vec[2]];
+
+    int off;
+    errorCode lab = convertNumberFormat(&off, vec[3]);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    lab = offest6Range(off);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    *final += off; 
+
+    // set the dr
+    baseR <<= 6;
+    *final += baseR;
     dr <<= 9;
     *final += dr;
 
@@ -355,11 +402,25 @@ errorCode Assembly::orgRange(int num) {
     return OK_VALID;
 }
 
-errorCode Assembly::pCoffest9Range(int num) {
+errorCode Assembly::PCoffest9Range(int num) {
 
     if (num < 0 or num >= PROGRAM_BORDER) {
 
         msg = "Error in number PCoffest9, out of range\n";
+        return NUMBER_OUT_OF_RANGE;
+    }
+
+    return OK_VALID;
+}
+
+errorCode Assembly::offest6Range(int num) {
+    
+    // offset6 / 6 bit ~ 63 number
+    // p 31 & n 32
+
+    if (num <= -32 or num > 32) {
+
+        msg = "Error in number PCoffest6, out of range\n";
         return NUMBER_OUT_OF_RANGE;
     }
 
