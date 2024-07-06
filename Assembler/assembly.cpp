@@ -557,7 +557,7 @@ errorCode Assembly::BR(_16_BIT* final, vector<string> vec,
     *final = assembly_codes["BR"];
     _16_BIT n = 0, z = 0, p = 0, pcoff;
 
-    if (vec[0].length() == 3) {
+    if (vec[0].length() >= 3) {
         if (vec[0][2] == 'n' and n != 1)
             n = 1;
         else if (vec[0][2] == 'z' and z != 1)
@@ -570,7 +570,7 @@ errorCode Assembly::BR(_16_BIT* final, vector<string> vec,
         }
     }
 
-    if (vec[0].length() == 4) {
+    if (vec[0].length() >= 4) {
         if (vec[0][3] == 'n' and n != 1)
             n = 1;
         else if (vec[0][3] == 'z' and z != 1)
@@ -583,7 +583,7 @@ errorCode Assembly::BR(_16_BIT* final, vector<string> vec,
         }
     }
 
-    if (vec[0].length() == 5) {
+    if (vec[0].length() >= 5) {
         if (vec[0][4] == 'n' and n != 1)
             n = 1;
         else if (vec[0][4] == 'z' and z != 1)
