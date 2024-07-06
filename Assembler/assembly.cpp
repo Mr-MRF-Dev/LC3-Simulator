@@ -70,6 +70,10 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
     else if (front == "STI") {
         return STI(src, code, labels);
     }
+    
+    else if (front == "STR") {
+        return STR(src, code);
+    }
 
     msg = "Error in codes: invalid opcode\n";
     return INVALID_OPCODE;
