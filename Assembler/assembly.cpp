@@ -294,8 +294,7 @@ errorCode Assembly::LDI(_16_BIT* final, vector<string> vec,
     return OK_VALID;
 }
 
-errorCode Assembly::LDR(_16_BIT* final, vector<string> vec,
-                        map<string, _16_BIT>& labels) {
+errorCode Assembly::LDR(_16_BIT* final, vector<string> vec) {
 
     // LDI  DR  baser offest6
     // 1010 000 111   111111
@@ -330,7 +329,7 @@ errorCode Assembly::LDR(_16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    *final += off; 
+    *final += off;
 
     // set the dr
     baseR <<= 6;
@@ -414,7 +413,7 @@ errorCode Assembly::PCoffest9Range(int num) {
 }
 
 errorCode Assembly::offest6Range(int num) {
-    
+
     // offset6 / 6 bit ~ 63 number
     // p 31 & n 32
 

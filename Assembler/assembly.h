@@ -49,7 +49,7 @@ class Assembly {
         errorCode NOT(_16_BIT *, vector<string>);
         errorCode LD(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode LDI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
-        errorCode LDR(_16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode LDR(_16_BIT *, vector<string>);
 
         void shiftCopy(_16_BIT *, int, int);
 
