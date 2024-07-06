@@ -24,6 +24,7 @@ typedef enum errorCode {
     NUMBER_OUT_OF_RANGE, /* when number out of range */
     INVALID_ORG,         /* when the org number is invalid */
     INVALID_REG,         /* invalid register used */
+    INVALID_NZP,         /* invalid n z p flags */
     OTHER_ERROR          /* All other errors */
 
 } errorCode;
@@ -54,6 +55,7 @@ class Assembly {
         errorCode ST(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode STI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode STR(_16_BIT *, vector<string>);
+        errorCode BR(_16_BIT *, vector<string>, map<string, _16_BIT> &);
 
         void shiftCopy(_16_BIT *, int, int);
 

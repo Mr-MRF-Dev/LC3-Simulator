@@ -70,9 +70,13 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
     else if (front == "STI") {
         return STI(src, code, labels);
     }
-    
+
     else if (front == "STR") {
         return STR(src, code);
+    }
+
+    else if (front.substr(0, 2) == "BR") {
+        return BR(src, code, labels);
     }
 
     msg = "Error in codes: invalid opcode\n";
@@ -524,6 +528,82 @@ errorCode Assembly::STR(_16_BIT* final, vector<string> vec) {
     *final += baseR;
     dr <<= 9;
     *final += dr;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::BR(_16_BIT* final, vector<string> vec,
+                       map<string, _16_BIT>& labels) {
+
+    // BR   nzp  PCoffest9
+    // 0000 000 111111111
+
+    *final = assembly_codes["BR"];
+    _16_BIT n = 0, z = 0, p = 0, pcoff;
+
+    if (vec[0].length() == 3) {
+        if (vec[0][2] == 'n' and n != 1)
+            n = 1;
+        else if (vec[0][2] == 'z' and z != 1)
+            z = 1;
+        else if (vec[0][2] == 'p' and p != 1)
+            p = 1;
+        else {
+            msg = "Error Br: n z p flags\n";
+            return INVALID_NZP;
+        }
+    }
+
+    if (vec[0].length() == 4) {
+        if (vec[0][3] == 'n' and n != 1)
+            n = 1;
+        else if (vec[0][3] == 'z' and z != 1)
+            z = 1;
+        else if (vec[0][3] == 'p' and p != 1)
+            p = 1;
+        else {
+            msg = "Error Br: n z p flags\n";
+            return INVALID_NZP;
+        }
+    }
+
+    if (vec[0].length() == 5) {
+        if (vec[0][4] == 'n' and n != 1)
+            n = 1;
+        else if (vec[0][4] == 'z' and z != 1)
+            z = 1;
+        else if (vec[0][4] == 'p' and p != 1)
+            p = 1;
+        else {
+            msg = "Error Br: n z p flags\n";
+            return INVALID_NZP;
+        }
+    }
+
+    if (labels.find(vec[1]) == labels.end()) {
+        msg = "Error Br: bad label not found\n";
+        return INVALID_LABEL;
+    }
+
+    pcoff = labels[vec[1]];
+
+    errorCode lab = PCoffest9Range(pcoff);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    *final += pcoff;  // 111 111 111
+    // or use shiftCopy
+    // shiftCopy(final, pcoff, 9);
+
+    // set the nzp
+    p <<= 9;
+    *final += p;
+    z <<= 10;
+    *final += z;
+    n <<= 11;
+    *final += n;
 
     return OK_VALID;
 }
