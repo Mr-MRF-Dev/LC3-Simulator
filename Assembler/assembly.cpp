@@ -51,6 +51,14 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
         return LD(src, code, labels);
     }
 
+    else if (front == "LDI") {
+        return LDI(src, code, labels);
+    }
+
+    else if (front == "LDR") {
+        return LDR(src, code);
+    }
+
     msg = "Error in codes: invalid opcode\n";
     return INVALID_OPCODE;
 }
@@ -299,7 +307,7 @@ errorCode Assembly::LDR(_16_BIT* final, vector<string> vec) {
     // LDI  DR  baser offest6
     // 1010 000 111   111111
 
-    *final = assembly_codes["LDI"];
+    *final = assembly_codes["LDR"];
     _16_BIT dr, baseR;
 
     if (REGs.find(vec[1]) == REGs.end()) {
