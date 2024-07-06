@@ -59,6 +59,10 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
         return LDR(src, code);
     }
 
+    else if (front == "LEA") {
+        return LEA(src, code, labels);
+    }
+
     msg = "Error in codes: invalid opcode\n";
     return INVALID_OPCODE;
 }
@@ -242,7 +246,7 @@ errorCode Assembly::LD(_16_BIT* final, vector<string> vec,
 
     if (labels.find(vec[2]) == labels.end()) {
         msg = "Error ld: bad label not found\n";
-        return INVALID_REG;
+        return INVALID_LABEL;
     }
 
     pcoff = labels[vec[2]];
@@ -282,7 +286,7 @@ errorCode Assembly::LDI(_16_BIT* final, vector<string> vec,
 
     if (labels.find(vec[2]) == labels.end()) {
         msg = "Error ldi: bad label not found\n";
-        return INVALID_REG;
+        return INVALID_LABEL;
     }
 
     pcoff = labels[vec[2]];
@@ -304,8 +308,8 @@ errorCode Assembly::LDI(_16_BIT* final, vector<string> vec,
 
 errorCode Assembly::LDR(_16_BIT* final, vector<string> vec) {
 
-    // LDI  DR  baser offest6
-    // 1010 000 111   111111
+    // LDR  DR  baseR offest6
+    // 0110 000 111   111111
 
     *final = assembly_codes["LDR"];
     _16_BIT dr, baseR;
@@ -342,6 +346,44 @@ errorCode Assembly::LDR(_16_BIT* final, vector<string> vec) {
     // set the dr
     baseR <<= 6;
     *final += baseR;
+    dr <<= 9;
+    *final += dr;
+
+    return OK_VALID;
+}
+
+errorCode Assembly::LEA(_16_BIT* final, vector<string> vec,
+                        map<string, _16_BIT>& labels) {
+
+    // LEA  DR   PCoffest9
+    // 1110 000 111 111 111
+
+    *final = assembly_codes["LEA"];
+    _16_BIT dr, pcoff;
+
+    if (REGs.find(vec[1]) == REGs.end()) {
+        msg = "Error Lea: bad DR\n";
+        return INVALID_REG;
+    }
+
+    dr = REGs[vec[1]];
+
+    if (labels.find(vec[2]) == labels.end()) {
+        msg = "Error lea: bad label not found\n";
+        return INVALID_LABEL;
+    }
+
+    pcoff = labels[vec[2]];
+
+    errorCode lab = PCoffest9Range(pcoff);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    *final += pcoff;  // 111 111 111
+
+    // set the dr
     dr <<= 9;
     *final += dr;
 

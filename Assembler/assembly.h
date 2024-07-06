@@ -17,7 +17,7 @@ typedef unsigned short int _16_BIT;  // 2 Byte ~ 16 bit
 typedef enum errorCode {
     OK_VALID,            /* No Error */
     UNDEFINED_LABEL,     /* LABEL used without definition */
-    INVALID_LABEL,       /* Duplicate label used */
+    INVALID_LABEL,       /* Duplicate label used or label not found */
     INVALID_OPCODE,      /* OPCODE doesn't exist in ISA */
     INVALID_CONSTANT,    /* Illegal use of CONSTANT operand */
     INVALID_NUMBER,      /* invalid number format */
@@ -50,6 +50,7 @@ class Assembly {
         errorCode LD(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode LDI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode LDR(_16_BIT *, vector<string>);
+        errorCode LEA(_16_BIT *, vector<string>, map<string, _16_BIT>&);
 
         void shiftCopy(_16_BIT *, int, int);
 
