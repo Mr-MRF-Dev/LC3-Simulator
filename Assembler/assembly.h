@@ -48,10 +48,13 @@ class Assembly {
         errorCode ADD(_16_BIT *, vector<string>);
         errorCode AND(_16_BIT *, vector<string>);
         errorCode NOT(_16_BIT *, vector<string>);
-        errorCode LD(_16_BIT, _16_BIT *, vector<string>, map<string, _16_BIT> &);
-        errorCode LDI(_16_BIT, _16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode LD(_16_BIT, _16_BIT *, vector<string>,
+                     map<string, _16_BIT> &);
+        errorCode LDI(_16_BIT, _16_BIT *, vector<string>,
+                      map<string, _16_BIT> &);
         errorCode LDR(_16_BIT *, vector<string>);
-        errorCode LEA(_16_BIT *, vector<string>, map<string, _16_BIT>&);
+        errorCode LEA(_16_BIT, _16_BIT *, vector<string>,
+                      map<string, _16_BIT> &);
         errorCode ST(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode STI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode STR(_16_BIT *, vector<string>);
@@ -76,7 +79,8 @@ class Assembly {
         errorCode convertNumberFormat(int *, string);
         errorCode convertNumberFormat(_16_BIT *, string);
 
-        errorCode encode(_16_BIT, _16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode encode(_16_BIT, _16_BIT *, vector<string>,
+                         map<string, _16_BIT> &);
         string getMsg();
 };
 

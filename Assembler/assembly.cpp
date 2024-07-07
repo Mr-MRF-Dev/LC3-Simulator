@@ -60,7 +60,7 @@ errorCode Assembly::encode(_16_BIT pc, _16_BIT* src, vector<string> code,
     }
 
     else if (front == "LEA") {
-        return LEA(src, code, labels);
+        return LEA(pc, src, code, labels);
     }
 
     else if (front == "ST") {
@@ -326,7 +326,7 @@ errorCode Assembly::LD(_16_BIT pc, _16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    int sum = addr - pc;
+    int sum = (int)addr - (int)pc;
     shiftCopy(final, sum, 9);
 
     // 111 111 111
@@ -374,7 +374,7 @@ errorCode Assembly::LDI(_16_BIT pc, _16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    int sum = addr - pc;
+    int sum = (int)addr - (int)pc;
     shiftCopy(final, sum, 9);
 
     // set the dr
@@ -430,14 +430,15 @@ errorCode Assembly::LDR(_16_BIT* final, vector<string> vec) {
     return OK_VALID;
 }
 
-errorCode Assembly::LEA(_16_BIT* final, vector<string> vec,
+errorCode Assembly::LEA(_16_BIT pc, _16_BIT* final, vector<string> vec,
                         map<string, _16_BIT>& labels) {
 
     // LEA  DR   PCoffest9
     // 1110 000 111 111 111
 
     *final = assembly_codes["LEA"];
-    _16_BIT dr, pcoff;
+    _16_BIT dr, addr;
+    errorCode lab;
 
     if (REGs.find(vec[1]) == REGs.end()) {
         msg = "Error Lea: bad DR\n";
@@ -447,19 +448,25 @@ errorCode Assembly::LEA(_16_BIT* final, vector<string> vec,
     dr = REGs[vec[1]];
 
     if (labels.find(vec[2]) == labels.end()) {
-        msg = "Error lea: bad label not found\n";
-        return INVALID_LABEL;
+        lab = convertNumberFormat(&addr, vec[2]);
+        if (lab != OK_VALID) {
+            msg += "Error lea: bad addr\n";
+            return lab;
+        }
     }
 
-    pcoff = labels[vec[2]];
+    else {
+        addr = labels[vec[2]];
+    }
 
-    errorCode lab = PCoffest9Range(pcoff);
+    lab = PCoffest9Range(addr);
 
     if (lab != OK_VALID) {
         return lab;
     }
 
-    *final += pcoff;  // 111 111 111
+    int sum = (int)addr - (int)pc;
+    shiftCopy(final, sum, 9);
 
     // set the dr
     dr <<= 9;
