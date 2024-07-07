@@ -1,7 +1,7 @@
 #include <QApplication>
 
 #include "assembler.h"
-#include "codeeditor.h"
+#include "assembler_window.h"
 #include "mainwindow.h"
 
 int main(int argc, char *argv[]) {

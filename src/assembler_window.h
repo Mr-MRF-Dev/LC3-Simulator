@@ -1,5 +1,5 @@
-#ifndef CODEEDITOR_H
-#define CODEEDITOR_H
+#ifndef ASSEMBLER_WINDOW_H
+#define ASSEMBLER_WINDOW_H
 
 #include <QPaintEvent>
 #include <QPlainTextEdit>
@@ -48,4 +48,12 @@ class LineNumberArea : public QWidget {
         }
 };
 
-#endif  // CODEEDITOR_H
+class assemblerWindow : public QWidget {
+public:
+    assemblerWindow(QWidget*);
+
+
+    
+};
+
+#endif  // ASSEMBLER_WINDOW_H

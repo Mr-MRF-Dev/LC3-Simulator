@@ -1,10 +1,10 @@
-#include "codeeditor.h"
+#include "assembler_window.h"
 
 #include <QDebug>
 #include <QPainter>
 #include <QTextBlock>
 
-#include "codeeditor.h"
+#include "assembler_window.h"
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent) {
     lineNumberArea = new LineNumberArea(this);
@@ -98,5 +98,6 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
         ++blockNumber;
     }
 }
+
 
 // EOF
