@@ -76,7 +76,7 @@ errorCode Assembly::encode(_16_BIT pc, _16_BIT* src, vector<string> code,
     }
 
     else if (front.substr(0, 2) == "BR") {
-        return BR(src, code, labels);
+        return BR(pc, src, code, labels);
     }
 
     else if (front == "JMP") {
@@ -611,14 +611,15 @@ errorCode Assembly::STR(_16_BIT* final, vector<string> vec) {
     return OK_VALID;
 }
 
-errorCode Assembly::BR(_16_BIT* final, vector<string> vec,
+errorCode Assembly::BR(_16_BIT pc, _16_BIT* final, vector<string> vec,
                        map<string, _16_BIT>& labels) {
 
     // BR   nzp  PCoffest9
     // 0000 000 111111111
 
     *final = assembly_codes["BR"];
-    _16_BIT n = 0, z = 0, p = 0, pcoff;
+    _16_BIT n = 0, z = 0, p = 0, addr;
+    errorCode lab;
 
     if (vec[0].length() >= 3) {
         if (vec[0][2] == 'n' and n != 1)
@@ -660,21 +661,25 @@ errorCode Assembly::BR(_16_BIT* final, vector<string> vec,
     }
 
     if (labels.find(vec[1]) == labels.end()) {
-        msg = "Error Br: bad label not found\n";
-        return INVALID_LABEL;
+        lab = convertNumberFormat(&addr, vec[1]);
+        if (lab != OK_VALID) {
+            msg += "Error st: bad addr\n";
+            return lab;
+        }
     }
 
-    pcoff = labels[vec[1]];
+    else {
+        addr = labels[vec[1]];
+    }
 
-    errorCode lab = PCoffest9Range(pcoff);
+    lab = PCoffest9Range(addr);
 
     if (lab != OK_VALID) {
         return lab;
     }
 
-    *final += pcoff;  // 111 111 111
-    // or use shiftCopy
-    // shiftCopy(final, pcoff, 9);
+    int sum = (int)addr - (int)pc;
+    shiftCopy(final, sum, 9);
 
     // set the nzp
     p <<= 9;
