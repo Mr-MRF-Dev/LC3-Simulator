@@ -93,6 +93,26 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
     }
 }
 
+QString CodeEditor::getText() {
+    QTextDocument* docs = this->document();
+    QString txt = docs->toRawText();
+
+    QString final;
+
+    // the char is split point \u2029
+    for (auto i : txt.split(u'\u2029', Qt::SkipEmptyParts)) {
+        // qDebug() << i;
+        if(!i.isEmpty()) {
+            final += i;
+            final += '\n';
+        }
+    }
+
+    qDebug() << final;
+
+    return final;
+}
+
 AssemblerWindow::AssemblerWindow(QWidget *parent) : QWidget(parent) {
 
     string file_name = "MEMMORY";
@@ -119,7 +139,7 @@ AssemblerWindow::AssemblerWindow(QWidget *parent) : QWidget(parent) {
 
     compiler_button = new QPushButton(this);
     compiler_button->setText("Compile Code");
-    // connect(compiler_button, &QPushButton::clicked, this, &AssemblerWindow::compile);
+    connect(compiler_button, &QPushButton::clicked, this, &AssemblerWindow::compile);
 
     QVBoxLayout* body_layout = new QVBoxLayout(this);
     body_layout->addLayout(fn_layout);
@@ -133,6 +153,15 @@ void AssemblerWindow::changeFileName() {
     ASB->setFileName(new_fn.toStdString());
 
     // qDebug() << QString::fromStdString(ASB->getFileName());
+}
+
+void AssemblerWindow::compile() {
+
+    QString codes = editor->getText();
+
+    ASB->compiler(codes.toStdString());
+
+    qDebug() << QString::fromStdString(ASB->getMsg());
 }
 
 // EOF

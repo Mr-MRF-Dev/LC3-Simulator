@@ -25,6 +25,7 @@ class CodeEditor : public QPlainTextEdit {
     public:
         CodeEditor(QWidget *parent = nullptr);
 
+        QString getText();
         void lineNumberAreaPaintEvent(QPaintEvent *event);
         int lineNumberAreaWidth();
 
@@ -59,7 +60,6 @@ class LineNumberArea : public QWidget {
 };
 
 class AssemblerWindow : public QWidget {
-
     Q_OBJECT
 
     private:
@@ -74,6 +74,7 @@ class AssemblerWindow : public QWidget {
 
     public slots:
         void changeFileName();
+        void compile();
 };
 
 #endif  // ASSEMBLER_WINDOW_H
