@@ -1,11 +1,21 @@
 #ifndef ASSEMBLER_WINDOW_H
 #define ASSEMBLER_WINDOW_H
 
+#include <QDebug>
 #include <QPaintEvent>
+#include <QPainter>
 #include <QPlainTextEdit>
+#include <QPushButton>
 #include <QResizeEvent>
 #include <QSize>
+#include <QTextBlock>
 #include <QWidget>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+
+#include "assembler.h"
 
 class LineNumberArea;
 
@@ -48,12 +58,22 @@ class LineNumberArea : public QWidget {
         }
 };
 
-class assemblerWindow : public QWidget {
-public:
-    assemblerWindow(QWidget*);
+class AssemblerWindow : public QWidget {
 
+    Q_OBJECT
 
-    
+    private:
+        Assembler* ASB;
+
+        QLineEdit* file_name_lineE;
+        CodeEditor *editor;
+        QPushButton* compiler_button;
+
+    public:
+        AssemblerWindow(QWidget * parent = nullptr);
+
+    public slots:
+        void changeFileName();
 };
 
 #endif  // ASSEMBLER_WINDOW_H

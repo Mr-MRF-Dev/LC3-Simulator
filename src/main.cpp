@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    CodeEditor s;
+    AssemblerWindow s;
     s.show();
 
     Assembler A;

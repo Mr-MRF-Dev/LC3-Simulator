@@ -1,11 +1,5 @@
 #include "assembler_window.h"
 
-#include <QDebug>
-#include <QPainter>
-#include <QTextBlock>
-
-#include "assembler_window.h"
-
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent) {
     lineNumberArea = new LineNumberArea(this);
 
@@ -99,5 +93,46 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
     }
 }
 
+AssemblerWindow::AssemblerWindow(QWidget *parent) : QWidget(parent) {
+
+    string file_name = "MEMMORY";
+    ASB = new Assembler(file_name);
+
+    QLabel* file_name_label = new QLabel(this);
+    file_name_label->setText("File Name:");
+
+    QLabel* file_format_label = new QLabel(this);
+    file_format_label->setText(".bin");
+
+    file_name_lineE = new QLineEdit(this);
+    file_name_lineE->setText(QString::fromStdString(file_name));
+
+    connect(file_name_lineE, &QLineEdit::editingFinished, this, &AssemblerWindow::changeFileName);
+
+    QHBoxLayout* fn_layout = new QHBoxLayout();
+    fn_layout->addWidget(file_name_label);
+    fn_layout->addWidget(file_name_lineE);
+    fn_layout->addWidget(file_format_label);
+
+    editor = new CodeEditor(this);
+    editor->setFocus();
+
+    compiler_button = new QPushButton(this);
+    compiler_button->setText("Compile Code");
+    // connect(compiler_button, &QPushButton::clicked, this, &AssemblerWindow::compile);
+
+    QVBoxLayout* body_layout = new QVBoxLayout(this);
+    body_layout->addLayout(fn_layout);
+    body_layout->addWidget(editor);
+    body_layout->addWidget(compiler_button);
+}
+
+void AssemblerWindow::changeFileName() {
+
+    QString new_fn = file_name_lineE->text();
+    ASB->setFileName(new_fn.toStdString());
+
+    // qDebug() << QString::fromStdString(ASB->getFileName());
+}
 
 // EOF
