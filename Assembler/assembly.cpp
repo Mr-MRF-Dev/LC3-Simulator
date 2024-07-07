@@ -64,11 +64,11 @@ errorCode Assembly::encode(_16_BIT pc, _16_BIT* src, vector<string> code,
     }
 
     else if (front == "ST") {
-        return ST(src, code, labels);
+        return ST(pc, src, code, labels);
     }
 
     else if (front == "STI") {
-        return STI(src, code, labels);
+        return STI(pc, src, code, labels);
     }
 
     else if (front == "STR") {
@@ -475,14 +475,15 @@ errorCode Assembly::LEA(_16_BIT pc, _16_BIT* final, vector<string> vec,
     return OK_VALID;
 }
 
-errorCode Assembly::ST(_16_BIT* final, vector<string> vec,
+errorCode Assembly::ST(_16_BIT pc, _16_BIT* final, vector<string> vec,
                        map<string, _16_BIT>& labels) {
 
     // ST   DR  PCoffest9
     // 0011 000 111111111
 
     *final = assembly_codes["ST"];
-    _16_BIT dr, pcoff;
+    _16_BIT dr, addr;
+    errorCode lab;
 
     if (REGs.find(vec[1]) == REGs.end()) {
         msg = "Error St: bad DR\n";
@@ -492,21 +493,25 @@ errorCode Assembly::ST(_16_BIT* final, vector<string> vec,
     dr = REGs[vec[1]];
 
     if (labels.find(vec[2]) == labels.end()) {
-        msg = "Error St: bad label not found\n";
-        return INVALID_LABEL;
+        lab = convertNumberFormat(&addr, vec[2]);
+        if (lab != OK_VALID) {
+            msg += "Error st: bad addr\n";
+            return lab;
+        }
     }
 
-    pcoff = labels[vec[2]];
+    else {
+        addr = labels[vec[2]];
+    }
 
-    errorCode lab = PCoffest9Range(pcoff);
+    lab = PCoffest9Range(addr);
 
     if (lab != OK_VALID) {
         return lab;
     }
 
-    *final += pcoff;  // 111 111 111
-    // or use shiftCopy
-    // shiftCopy(final, pcoff, 9);
+    int sum = (int)addr - (int)pc;
+    shiftCopy(final, sum, 9);
 
     // set the dr
     dr <<= 9;
@@ -515,14 +520,15 @@ errorCode Assembly::ST(_16_BIT* final, vector<string> vec,
     return OK_VALID;
 }
 
-errorCode Assembly::STI(_16_BIT* final, vector<string> vec,
+errorCode Assembly::STI(_16_BIT pc, _16_BIT* final, vector<string> vec,
                         map<string, _16_BIT>& labels) {
 
     // STI   DR  PCoffest9
     // 1011 000 111111111
 
     *final = assembly_codes["STI"];
-    _16_BIT dr, pcoff;
+    _16_BIT dr, addr;
+    errorCode lab;
 
     if (REGs.find(vec[1]) == REGs.end()) {
         msg = "Error Sti: bad DR\n";
@@ -532,21 +538,25 @@ errorCode Assembly::STI(_16_BIT* final, vector<string> vec,
     dr = REGs[vec[1]];
 
     if (labels.find(vec[2]) == labels.end()) {
-        msg = "Error Sti: bad label not found\n";
-        return INVALID_LABEL;
+        lab = convertNumberFormat(&addr, vec[2]);
+        if (lab != OK_VALID) {
+            msg += "Error st: bad addr\n";
+            return lab;
+        }
     }
 
-    pcoff = labels[vec[2]];
+    else {
+        addr = labels[vec[2]];
+    }
 
-    errorCode lab = PCoffest9Range(pcoff);
+    lab = PCoffest9Range(addr);
 
     if (lab != OK_VALID) {
         return lab;
     }
 
-    *final += pcoff;  // 111 111 111
-    // or use shiftCopy
-    // shiftCopy(final, pcoff, 9);
+    int sum = (int)addr - (int)pc;
+    shiftCopy(final, sum, 9);
 
     // set the dr
     dr <<= 9;
