@@ -88,7 +88,7 @@ errorCode Assembly::encode(_16_BIT pc, _16_BIT* src, vector<string> code,
     }
 
     else if (front == "JSR") {
-        return JSR(src, code, labels);
+        return JSR(pc, src, code, labels);
     }
 
     else if (front == "JSRR") {
@@ -320,7 +320,7 @@ errorCode Assembly::LD(_16_BIT pc, _16_BIT* final, vector<string> vec,
         addr = labels[vec[2]];
     }
 
-    lab = PCoffest9Range(addr);
+    lab = PCoffestRange(addr);
 
     if (lab != OK_VALID) {
         return lab;
@@ -368,7 +368,7 @@ errorCode Assembly::LDI(_16_BIT pc, _16_BIT* final, vector<string> vec,
         addr = labels[vec[2]];
     }
 
-    lab = PCoffest9Range(addr);
+    lab = PCoffestRange(addr);
 
     if (lab != OK_VALID) {
         return lab;
@@ -459,7 +459,7 @@ errorCode Assembly::LEA(_16_BIT pc, _16_BIT* final, vector<string> vec,
         addr = labels[vec[2]];
     }
 
-    lab = PCoffest9Range(addr);
+    lab = PCoffestRange(addr);
 
     if (lab != OK_VALID) {
         return lab;
@@ -504,7 +504,7 @@ errorCode Assembly::ST(_16_BIT pc, _16_BIT* final, vector<string> vec,
         addr = labels[vec[2]];
     }
 
-    lab = PCoffest9Range(addr);
+    lab = PCoffestRange(addr);
 
     if (lab != OK_VALID) {
         return lab;
@@ -549,7 +549,7 @@ errorCode Assembly::STI(_16_BIT pc, _16_BIT* final, vector<string> vec,
         addr = labels[vec[2]];
     }
 
-    lab = PCoffest9Range(addr);
+    lab = PCoffestRange(addr);
 
     if (lab != OK_VALID) {
         return lab;
@@ -663,7 +663,7 @@ errorCode Assembly::BR(_16_BIT pc, _16_BIT* final, vector<string> vec,
     if (labels.find(vec[1]) == labels.end()) {
         lab = convertNumberFormat(&addr, vec[1]);
         if (lab != OK_VALID) {
-            msg += "Error st: bad addr\n";
+            msg += "Error BR: bad addr\n";
             return lab;
         }
     }
@@ -672,7 +672,7 @@ errorCode Assembly::BR(_16_BIT pc, _16_BIT* final, vector<string> vec,
         addr = labels[vec[1]];
     }
 
-    lab = PCoffest9Range(addr);
+    lab = PCoffestRange(addr);
 
     if (lab != OK_VALID) {
         return lab;
@@ -729,23 +729,37 @@ errorCode Assembly::RET(_16_BIT* final, vector<string> vec) {
     return OK_VALID;
 }
 
-errorCode Assembly::JSR(_16_BIT* final, vector<string> vec,
+errorCode Assembly::JSR(_16_BIT pc, _16_BIT* final, vector<string> vec,
                         map<string, _16_BIT>& labels) {
 
     // JSR    PCoffset11
     // 0100 1 00000000000
 
-    _16_BIT pcoff;
+    _16_BIT addr;
+    errorCode lab;
 
     *final = assembly_codes["JSR"];
 
-    if (labels.find(vec[1]) == labels.end()) {
-        msg = "Error jsr: bad label not found\n";
-        return INVALID_LABEL;
+    if (labels.find(vec[2]) == labels.end()) {
+        lab = convertNumberFormat(&addr, vec[2]);
+        if (lab != OK_VALID) {
+            msg += "Error jsr: bad addr\n";
+            return lab;
+        }
     }
 
-    pcoff = labels[vec[1]];
-    *final += pcoff;
+    else {
+        addr = labels[vec[2]];
+    }
+
+    lab = PCoffestRange(addr);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    int sum = (int)addr - (int)pc;
+    shiftCopy(final, sum, 9);
 
     _16_BIT flag = 1;
     flag <<= 11;
@@ -880,11 +894,11 @@ errorCode Assembly::orgRange(int num) {
     return OK_VALID;
 }
 
-errorCode Assembly::PCoffest9Range(int num) {
+errorCode Assembly::PCoffestRange(int num) {
 
     if (num < 0 or num >= PROGRAM_BORDER) {
 
-        msg = "Error in number PCoffest9, out of range\n";
+        msg = "Error in number PCoffest, out of range\n";
         return NUMBER_OUT_OF_RANGE;
     }
 

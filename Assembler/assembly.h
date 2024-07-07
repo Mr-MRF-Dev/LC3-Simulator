@@ -64,7 +64,8 @@ class Assembly {
                      map<string, _16_BIT> &);
         errorCode JMP(_16_BIT *, vector<string>);
         errorCode RET(_16_BIT *, vector<string>);
-        errorCode JSR(_16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode JSR(_16_BIT, _16_BIT *, vector<string>,
+                      map<string, _16_BIT> &);
         errorCode JSRR(_16_BIT *, vector<string>);
         errorCode Variable(_16_BIT *, vector<string>);
 
@@ -77,7 +78,7 @@ class Assembly {
 
         errorCode imm5Range(int);
         errorCode orgRange(int);
-        errorCode PCoffest9Range(int);
+        errorCode PCoffestRange(int);
         errorCode offest6Range(int);
         errorCode convertNumberFormat(int *, string);
         errorCode convertNumberFormat(_16_BIT *, string);
@@ -86,5 +87,9 @@ class Assembly {
                          map<string, _16_BIT> &);
         string getMsg();
 };
+
+// TODOS:
+// 1 : fix pcoffset border
+// 2 : error handler
 
 #endif  // ASSEMBLY_H
