@@ -1,6 +1,6 @@
 #include "assembler_window.h"
 
-CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent) {
+CodeEditor::CodeEditor(QWidget* parent) : QPlainTextEdit(parent) {
     lineNumberArea = new LineNumberArea(this);
 
     connect(this, &CodeEditor::blockCountChanged, this,
@@ -31,7 +31,7 @@ void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */) {
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
 }
 
-void CodeEditor::updateLineNumberArea(const QRect &rect, int dy) {
+void CodeEditor::updateLineNumberArea(const QRect& rect, int dy) {
     if (dy)
         lineNumberArea->scroll(0, dy);
     else
@@ -41,7 +41,7 @@ void CodeEditor::updateLineNumberArea(const QRect &rect, int dy) {
     if (rect.contains(viewport()->rect())) updateLineNumberAreaWidth(0);
 }
 
-void CodeEditor::resizeEvent(QResizeEvent *e) {
+void CodeEditor::resizeEvent(QResizeEvent* e) {
     QPlainTextEdit::resizeEvent(e);
     QRect cr = contentsRect();
 
@@ -67,7 +67,7 @@ void CodeEditor::highlightCurrentLine() {
     setExtraSelections(extraSelections);
 }
 
-void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
+void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent* event) {
     QPainter painter(lineNumberArea);
     painter.fillRect(event->rect(), Qt::darkGray);
 
@@ -102,7 +102,7 @@ QString CodeEditor::getText() {
     // the char is split point \u2029
     for (auto i : txt.split(u'\u2029', Qt::SkipEmptyParts)) {
         // qDebug() << i;
-        if(!i.isEmpty()) {
+        if (!i.isEmpty()) {
             final += i;
             final += '\n';
         }
@@ -113,7 +113,7 @@ QString CodeEditor::getText() {
     return final;
 }
 
-AssemblerWindow::AssemblerWindow(QWidget *parent) : QWidget(parent) {
+AssemblerWindow::AssemblerWindow(QWidget* parent) : QWidget(parent) {
 
     string file_name = "MEMMORY";
     ASB = new Assembler(file_name);
@@ -127,7 +127,8 @@ AssemblerWindow::AssemblerWindow(QWidget *parent) : QWidget(parent) {
     file_name_lineE = new QLineEdit(this);
     file_name_lineE->setText(QString::fromStdString(file_name));
 
-    connect(file_name_lineE, &QLineEdit::editingFinished, this, &AssemblerWindow::changeFileName);
+    connect(file_name_lineE, &QLineEdit::editingFinished, this,
+            &AssemblerWindow::changeFileName);
 
     QHBoxLayout* fn_layout = new QHBoxLayout();
     fn_layout->addWidget(file_name_label);
@@ -139,11 +140,13 @@ AssemblerWindow::AssemblerWindow(QWidget *parent) : QWidget(parent) {
 
     QPushButton* compiler_button = new QPushButton(this);
     compiler_button->setText("Compile Code");
-    connect(compiler_button, &QPushButton::clicked, this, &AssemblerWindow::compile);
+    connect(compiler_button, &QPushButton::clicked, this,
+            &AssemblerWindow::compile);
 
     QPushButton* save_button = new QPushButton(this);
     save_button->setText("Save File");
-    connect(save_button, &QPushButton::clicked, this, &AssemblerWindow::saveFile);
+    connect(save_button, &QPushButton::clicked, this,
+            &AssemblerWindow::saveFile);
 
     QVBoxLayout* body_layout = new QVBoxLayout(this);
     body_layout->addLayout(fn_layout);
@@ -180,6 +183,5 @@ void AssemblerWindow::saveFile() {
         qDebug() << QString::fromStdString(ASB->getMsg());
     }
 }
-
 
 // EOF
