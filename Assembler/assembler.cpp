@@ -12,7 +12,7 @@ Assembler::Assembler(string s) : msg("OK!") {
     clear();
 }
 
-void Assembler::setFileName(string str) { file_name = str; }
+void Assembler::setFileName(string str) { file_name = str + BIN_FORMAT; }
 
 string Assembler::getFileName() { return file_name; }
 
