@@ -67,7 +67,6 @@ class AssemblerWindow : public QWidget {
 
         QLineEdit* file_name_lineE;
         CodeEditor *editor;
-        QPushButton* compiler_button;
 
     public:
         AssemblerWindow(QWidget * parent = nullptr);
@@ -75,6 +74,7 @@ class AssemblerWindow : public QWidget {
     public slots:
         void changeFileName();
         void compile();
+        void saveFile();
 };
 
 #endif  // ASSEMBLER_WINDOW_H

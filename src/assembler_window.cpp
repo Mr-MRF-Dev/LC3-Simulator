@@ -108,7 +108,7 @@ QString CodeEditor::getText() {
         }
     }
 
-    qDebug() << final;
+    // qDebug() << final;
 
     return final;
 }
@@ -137,14 +137,19 @@ AssemblerWindow::AssemblerWindow(QWidget *parent) : QWidget(parent) {
     editor = new CodeEditor(this);
     editor->setFocus();
 
-    compiler_button = new QPushButton(this);
+    QPushButton* compiler_button = new QPushButton(this);
     compiler_button->setText("Compile Code");
     connect(compiler_button, &QPushButton::clicked, this, &AssemblerWindow::compile);
+
+    QPushButton* save_button = new QPushButton(this);
+    save_button->setText("Save File");
+    connect(save_button, &QPushButton::clicked, this, &AssemblerWindow::saveFile);
 
     QVBoxLayout* body_layout = new QVBoxLayout(this);
     body_layout->addLayout(fn_layout);
     body_layout->addWidget(editor);
     body_layout->addWidget(compiler_button);
+    body_layout->addWidget(save_button);
 }
 
 void AssemblerWindow::changeFileName() {
@@ -163,5 +168,18 @@ void AssemblerWindow::compile() {
 
     qDebug() << QString::fromStdString(ASB->getMsg());
 }
+
+void AssemblerWindow::saveFile() {
+
+    if (ASB->saveFile()) {
+        qDebug() << "ok: save file";
+    }
+
+    else {
+        qDebug() << "error: save file";
+        qDebug() << QString::fromStdString(ASB->getMsg());
+    }
+}
+
 
 // EOF
