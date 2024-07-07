@@ -14,6 +14,7 @@
 #include <QTextBlock>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QTextBrowser>
 
 #include "assembler.h"
 
@@ -65,8 +66,11 @@ class AssemblerWindow : public QWidget {
     private:
         Assembler *ASB;
 
+        QLabel* msg;
         QLineEdit *file_name_lineE;
         CodeEditor *editor;
+        void msgHandler(errorCode, QString);
+        void msgHandler(bool, QString);
 
     public:
         AssemblerWindow(QWidget *parent = nullptr);

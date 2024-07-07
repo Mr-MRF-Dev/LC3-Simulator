@@ -127,13 +127,16 @@ AssemblerWindow::AssemblerWindow(QWidget* parent) : QWidget(parent) {
     file_name_lineE = new QLineEdit(this);
     file_name_lineE->setText(QString::fromStdString(file_name));
 
-    connect(file_name_lineE, &QLineEdit::editingFinished, this,
+    QPushButton* fn_save_button = new QPushButton(this);
+    fn_save_button->setText("Save");
+    connect(fn_save_button, &QPushButton::clicked, this,
             &AssemblerWindow::changeFileName);
 
     QHBoxLayout* fn_layout = new QHBoxLayout();
     fn_layout->addWidget(file_name_label);
     fn_layout->addWidget(file_name_lineE);
     fn_layout->addWidget(file_format_label);
+    fn_layout->addWidget(fn_save_button);
 
     editor = new CodeEditor(this);
     editor->setFocus();
@@ -148,11 +151,18 @@ AssemblerWindow::AssemblerWindow(QWidget* parent) : QWidget(parent) {
     connect(save_button, &QPushButton::clicked, this,
             &AssemblerWindow::saveFile);
 
+    msg = new QLabel;
+    msg->hide();
+    connect(editor, &QPlainTextEdit::selectionChanged, msg, &QLabel::hide);
+    connect(file_name_lineE, &QLineEdit::textChanged, msg, &QLabel::hide);
+    connect(file_name_lineE, &QLineEdit::selectionChanged, msg, &QLabel::hide);
+
     QVBoxLayout* body_layout = new QVBoxLayout(this);
     body_layout->addLayout(fn_layout);
     body_layout->addWidget(editor);
     body_layout->addWidget(compiler_button);
     body_layout->addWidget(save_button);
+    body_layout->addWidget(msg);
 }
 
 void AssemblerWindow::changeFileName() {
@@ -160,28 +170,55 @@ void AssemblerWindow::changeFileName() {
     QString new_fn = file_name_lineE->text();
     ASB->setFileName(new_fn.toStdString());
 
+    msgHandler(true, "File Name Change");
+
     // qDebug() << QString::fromStdString(ASB->getFileName());
 }
 
 void AssemblerWindow::compile() {
-
     QString codes = editor->getText();
 
-    ASB->compiler(codes.toStdString());
-
-    qDebug() << QString::fromStdString(ASB->getMsg());
+    msgHandler(ASB->compiler(codes.toStdString()), "Compile");
 }
 
 void AssemblerWindow::saveFile() {
+    msgHandler(ASB->saveFile(), "Save File");
+}
 
-    if (ASB->saveFile()) {
-        qDebug() << "ok: save file";
+void AssemblerWindow::msgHandler(errorCode err_code, QString label) {
+
+    QString err_msg =  "[" + label + "]" + ": ";
+    if (err_code == OK_VALID) {
+        err_msg += "OK, Done!";
+        msg->setStyleSheet("color: green;");
     }
 
     else {
-        qDebug() << "error: save file";
-        qDebug() << QString::fromStdString(ASB->getMsg());
+        err_msg += QString::fromStdString(ASB->getMsg());
+        msg->setStyleSheet("color: red;");
     }
+
+    qDebug() << err_msg;
+    msg->setText(err_msg);
+    msg->show();
+}
+
+void AssemblerWindow::msgHandler(bool err_flag, QString label) {
+
+    QString err_msg =  "[" + label + "]" + ": ";
+    if (err_flag) {
+        err_msg += "OK, Done!";
+        msg->setStyleSheet("color: green;");
+    }
+
+    else {
+        err_msg += QString::fromStdString(ASB->getMsg());
+        msg->setStyleSheet("color: red;");
+    }
+
+    qDebug() << err_msg;
+    msg->setText(err_msg);
+    msg->show();
 }
 
 // EOF
