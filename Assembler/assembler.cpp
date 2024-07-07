@@ -30,14 +30,22 @@ void Assembler::clear() {
 
 errorCode Assembler::compiler(string str) {
 
-    clear();
-    tokenize(str);
-    errorCode lab = createLabels();
-    if (lab == OK_VALID)
-        return core();
+    try {
+        clear();
 
-    else
-        return lab;
+        tokenize(str);
+        errorCode lab = createLabels();
+        if (lab == OK_VALID)
+            return core();
+
+        else
+            return lab;
+    }
+
+    catch (exception &e) {
+        msg = "compiler: Unknown error:" + string(e.what());
+        return OTHER_ERROR;
+    }
 }
 
 errorCode Assembler::core() {
