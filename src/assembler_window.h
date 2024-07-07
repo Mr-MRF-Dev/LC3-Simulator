@@ -12,9 +12,9 @@
 #include <QResizeEvent>
 #include <QSize>
 #include <QTextBlock>
+#include <QTextBrowser>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QTextBrowser>
 
 #include "assembler.h"
 
@@ -66,7 +66,7 @@ class AssemblerWindow : public QWidget {
     private:
         Assembler *ASB;
 
-        QLabel* msg;
+        QLabel *msg;
         QLineEdit *file_name_lineE;
         CodeEditor *editor;
         void msgHandler(errorCode, QString);

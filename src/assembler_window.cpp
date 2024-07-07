@@ -181,13 +181,11 @@ void AssemblerWindow::compile() {
     msgHandler(ASB->compiler(codes.toStdString()), "Compile");
 }
 
-void AssemblerWindow::saveFile() {
-    msgHandler(ASB->saveFile(), "Save File");
-}
+void AssemblerWindow::saveFile() { msgHandler(ASB->saveFile(), "Save File"); }
 
 void AssemblerWindow::msgHandler(errorCode err_code, QString label) {
 
-    QString err_msg =  "[" + label + "]" + ": ";
+    QString err_msg = "[" + label + "]" + ": ";
     if (err_code == OK_VALID) {
         err_msg += "OK, Done!";
         msg->setStyleSheet("color: green;");
@@ -205,7 +203,7 @@ void AssemblerWindow::msgHandler(errorCode err_code, QString label) {
 
 void AssemblerWindow::msgHandler(bool err_flag, QString label) {
 
-    QString err_msg =  "[" + label + "]" + ": ";
+    QString err_msg = "[" + label + "]" + ": ";
     if (err_flag) {
         err_msg += "OK, Done!";
         msg->setStyleSheet("color: green;");
