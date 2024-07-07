@@ -23,8 +23,6 @@ set(ASSEMBLER_SOURCES
 
 set(PROJECT_SOURCES
         src/main.cpp
-        src/mainwindow.cpp
-        src/mainwindow.h
         src/assembler_window.h
         src/assembler_window.cpp
         ${ASSEMBLER_SOURCES}
