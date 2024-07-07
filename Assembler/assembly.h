@@ -60,6 +60,7 @@ class Assembly {
         errorCode RET(_16_BIT *, vector<string>);
         errorCode JSR(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode JSRR(_16_BIT *, vector<string>);
+        errorCode Variable(_16_BIT *, vector<string>);
 
         void shiftCopy(_16_BIT *, int, int);
 

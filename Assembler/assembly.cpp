@@ -3,9 +3,9 @@
 string Assembly::getMsg() { return msg; }
 
 Assembly::Assembly() : msg("OK!") {
-    assembly_labels = { "ORG",  "ADD", "AND", "BR",  "JMP", "JSR",
-                        "JSRR", "LD",  "LDI", "LDR", "LEA", "NOT",
-                        "RET",  "RTI", "ST",  "STR", "TRAP" };
+    assembly_labels = { "ORG", "ADD", "AND",  "BR",  "JMP", "JSR", "JSRR",
+                        "LD",  "LDI", "LDR",  "LEA", "NOT", "RET", "RTI",
+                        "ST",  "STR", "TRAP", "BIN", "HEX", "DEC" };
 
     assembly_codes = { { "ADD", 0x1000 }, { "AND", 0x5000 }, { "BR", 0x0000 },
                        { "JMP", 0xc000 }, { "JSR", 0x4000 }, { "JSRR", 0x4000 },
@@ -95,8 +95,39 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
         return JSRR(src, code);
     }
 
+    else if (front == "BIN" || front == "DEC" || front == "HEX") {
+        return Variable(src, code);
+    }
+
     msg = "Error in codes: invalid opcode\n";
     return INVALID_OPCODE;
+}
+
+errorCode Assembly::Variable(_16_BIT* final, vector<string> vec) {
+
+    int num;
+    string num_str;
+
+    if (vec[0] == "BIN") {
+        num_str = "B";
+    } else if (vec[0] == "DEC") {
+        num_str = "#";
+    } else if (vec[0] == "HEX") {
+        num_str = "X";
+    } else {
+        return OTHER_ERROR;
+    }
+
+    num_str += vec[1];
+
+    errorCode lab = convertNumberFormat(&num, num_str);
+
+    if (lab != OK_VALID) {
+        return lab;
+    }
+
+    *final = 0;
+    shiftCopy(final, num, 16);
 }
 
 errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
