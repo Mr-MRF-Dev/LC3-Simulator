@@ -30,7 +30,7 @@ bool Assembly::isOpcode(string op_code) {
 
 bool Assembly::isORG(string str) { return (str == assembly_labels.front()); }
 
-errorCode Assembly::encode(_16_BIT* src, vector<string> code,
+errorCode Assembly::encode(_16_BIT pc, _16_BIT* src, vector<string> code,
                            map<string, _16_BIT>& labels) {
 
     string front = code.front();
@@ -48,7 +48,7 @@ errorCode Assembly::encode(_16_BIT* src, vector<string> code,
     }
 
     else if (front == "LD") {
-        return LD(src, code, labels);
+        return LD(pc, src, code, labels);
     }
 
     else if (front == "LDI") {
@@ -291,14 +291,15 @@ errorCode Assembly::NOT(_16_BIT* final, vector<string> vec) {
     return OK_VALID;
 }
 
-errorCode Assembly::LD(_16_BIT* final, vector<string> vec,
+errorCode Assembly::LD(_16_BIT pc, _16_BIT* final, vector<string> vec,
                        map<string, _16_BIT>& labels) {
 
     // LD   DR  PCoffest9
     // 0010 000 111111111
 
     *final = assembly_codes["LD"];
-    _16_BIT dr, pcoff;
+    _16_BIT dr, addr;
+    errorCode lab;
 
     if (REGs.find(vec[1]) == REGs.end()) {
         msg = "Error Ld: bad DR\n";
@@ -308,23 +309,30 @@ errorCode Assembly::LD(_16_BIT* final, vector<string> vec,
     dr = REGs[vec[1]];
 
     if (labels.find(vec[2]) == labels.end()) {
-        msg = "Error ld: bad label not found\n";
-        return INVALID_LABEL;
+        lab = convertNumberFormat(&addr, vec[2]);
+        if (lab != OK_VALID) {
+            msg += "Error ld: bad addr\n";
+            return lab;
+        }
     }
 
-    pcoff = labels[vec[2]];
+    else {
+        addr = labels[vec[2]];
+    }
 
-    errorCode lab = PCoffest9Range(pcoff);
+    lab = PCoffest9Range(addr);
 
     if (lab != OK_VALID) {
         return lab;
     }
 
-    *final += pcoff;  // 111 111 111
-    // or use shiftCopy
-    // shiftCopy(final, pcoff, 9);
+    int sum = addr - pc;
+    shiftCopy(final, sum, 9);
 
+    // 111 111 111
+    // or use shiftCopy
     // set the dr
+
     dr <<= 9;
     *final += dr;
 
@@ -766,6 +774,49 @@ errorCode Assembly::convertNumberFormat(int* num, string str) {
 
     try {
         *num = stoi(str, 0, mabna);
+    }
+
+    catch (exception& e) {
+        msg = string("Error: invalid number\n\n") + e.what();
+        return INVALID_NUMBER;
+    }
+
+    return OK_VALID;
+}
+
+errorCode Assembly::convertNumberFormat(_16_BIT* num, string str) {
+
+    char begin_char = str.front();
+    str.erase(str.begin());  // remove begin char
+
+    int mabna;
+
+    if (begin_char == '#') {
+        mabna = 10;
+    }
+
+    else if (begin_char == 'b' || begin_char == 'B') {
+        mabna = 2;
+
+    }
+
+    else if (begin_char == 'x' || begin_char == 'X') {
+        mabna = 16;
+    }
+
+    else {
+        msg = "Error: invalid number\n";
+        return INVALID_NUMBER;
+    }
+
+    try {
+        int res = stoi(str, 0, mabna);
+        if (res < 0) {
+            msg = string("Error: invalid number\n\n") + "N number";
+            return INVALID_NUMBER;
+        }
+
+        *num = res;
     }
 
     catch (exception& e) {

@@ -50,7 +50,7 @@ errorCode Assembler::compiler(string str) {
 
 errorCode Assembler::core() {
 
-    int start_line = 0;
+    _16_BIT start_line = 0;
 
     for (auto i : codes) {
         string op_code = i.front();
@@ -59,7 +59,8 @@ errorCode Assembler::core() {
         if (ASB.isORG(op_code)) {
             // convert hex to int for word address
             // start_line = hexToInt(i[1]);
-            errorCode lab = ASB.convertNumberFormat(&start_line, i[1]);
+            int new_pc;
+            errorCode lab = ASB.convertNumberFormat(&new_pc, i[1]);
 
             if (lab != OK_VALID) {
                 // TODO: fix the err msg
@@ -68,12 +69,13 @@ errorCode Assembler::core() {
                 return lab;
             }
 
+            start_line = new_pc;
             continue;
         }
 
         _16_BIT res = 0;
         // handle the code of line
-        errorCode lab = ASB.encode(&res, i, labels);
+        errorCode lab = ASB.encode(start_line, &res, i, labels);
 
         if (lab != OK_VALID) {
 
@@ -190,14 +192,15 @@ remove the labels from codes and save it in map
 */
 errorCode Assembler::createLabels() {
 
-    int start_line = 0;
+    _16_BIT start_line = 0;
 
     for (auto &i : codes) {
         string first = i.front();
 
         if (ASB.isORG(first)) {
             // convert hex to int for word address
-            errorCode lab = ASB.convertNumberFormat(&start_line, i[1]);
+            int new_pc;
+            errorCode lab = ASB.convertNumberFormat(&new_pc, i[1]);
 
             if (lab != OK_VALID) {
                 // TODO: fix the err msg
@@ -206,7 +209,8 @@ errorCode Assembler::createLabels() {
                 return lab;
             }
 
-            lab = ASB.orgRange(start_line);
+
+            lab = ASB.orgRange(new_pc);
 
             if (lab != OK_VALID) {
                 // TODO: fix the err msg
@@ -214,6 +218,7 @@ errorCode Assembler::createLabels() {
                 return lab;
             }
 
+            start_line = new_pc;
             continue;
         }
 

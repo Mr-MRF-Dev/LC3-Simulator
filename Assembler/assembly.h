@@ -48,7 +48,7 @@ class Assembly {
         errorCode ADD(_16_BIT *, vector<string>);
         errorCode AND(_16_BIT *, vector<string>);
         errorCode NOT(_16_BIT *, vector<string>);
-        errorCode LD(_16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode LD(_16_BIT, _16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode LDI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode LDR(_16_BIT *, vector<string>);
         errorCode LEA(_16_BIT *, vector<string>, map<string, _16_BIT>&);
@@ -74,8 +74,9 @@ class Assembly {
         errorCode PCoffest9Range(int);
         errorCode offest6Range(int);
         errorCode convertNumberFormat(int *, string);
+        errorCode convertNumberFormat(_16_BIT *, string);
 
-        errorCode encode(_16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode encode(_16_BIT, _16_BIT *, vector<string>, map<string, _16_BIT> &);
         string getMsg();
 };
 
