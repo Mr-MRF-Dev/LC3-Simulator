@@ -49,7 +49,7 @@ class Assembly {
         errorCode AND(_16_BIT *, vector<string>);
         errorCode NOT(_16_BIT *, vector<string>);
         errorCode LD(_16_BIT, _16_BIT *, vector<string>, map<string, _16_BIT> &);
-        errorCode LDI(_16_BIT *, vector<string>, map<string, _16_BIT> &);
+        errorCode LDI(_16_BIT, _16_BIT *, vector<string>, map<string, _16_BIT> &);
         errorCode LDR(_16_BIT *, vector<string>);
         errorCode LEA(_16_BIT *, vector<string>, map<string, _16_BIT>&);
         errorCode ST(_16_BIT *, vector<string>, map<string, _16_BIT> &);
