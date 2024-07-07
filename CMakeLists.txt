@@ -25,6 +25,8 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/mainwindow.cpp
         src/mainwindow.h
+        src/codeeditor.h
+        src/codeeditor.cpp
         ${ASSEMBLER_SOURCES}
 )
 
