@@ -25,6 +25,11 @@ bool Assembly::isOpcode(string op_code) {
         return true;
     }
 
+    // handle all BR types
+    else if (op_code.substr(0, 2) == "BR") {
+        return true;
+    }
+
     return false;
 }
 
