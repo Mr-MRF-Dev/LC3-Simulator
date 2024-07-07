@@ -17,6 +17,8 @@ include_directories(Assembler)
 set(ASSEMBLER_SOURCES
     Assembler/assembler.h
     Assembler/assembler.cpp
+    Assembler/assembly.h
+    Assembler/assembly.cpp
 )
 
 set(PROJECT_SOURCES
