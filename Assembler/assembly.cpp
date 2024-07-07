@@ -128,6 +128,8 @@ errorCode Assembly::Variable(_16_BIT* final, vector<string> vec) {
 
     *final = 0;
     shiftCopy(final, num, 16);
+
+    return OK_VALID;
 }
 
 errorCode Assembly::ADD(_16_BIT* final, vector<string> vec) {
