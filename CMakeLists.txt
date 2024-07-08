@@ -32,6 +32,8 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/assembler_window.h
         src/assembler_window.cpp
+        src/simulator_window.h
+        src/simulator_window.cpp
         ${ASSEMBLER_SOURCES}
         ${SIMULATOR_SOURCESF}
 )
