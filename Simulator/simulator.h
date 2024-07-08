@@ -11,17 +11,12 @@
 using namespace std;
 
 // define keywords
-#define SPLIT_SYMBOL '\n'
-#define COMMENT_SYMBOL ';'
-#define SPACE_SYMBOL ' '
-#define COMMA_SYMBOL ','
 #define BIN_FORMAT ".bin"
 #define DEFAULT_FILE_NAME "memory"
 
 #define MEMORY_SIZE 65536            // 64 * 1024
 #define PROGRAM_BORDER 0xFE00        // start I/O memory
 typedef unsigned short int _16_BIT;  // 2 Byte ~ 16 bit
-typedef short int _16_BIT_S;  // 2 Byte ~ 16 bit
 
 typedef enum simErrCode { OK, CANT_RUN, OTHER_ERROR } simErrCode;
 

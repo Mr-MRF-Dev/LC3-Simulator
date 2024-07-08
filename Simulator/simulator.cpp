@@ -45,7 +45,7 @@ vector<string> Simulator::getEdit() { return edit; }
 
 _16_BIT *Simulator::getMem() { return arr; }
 
-_16_BIT Simulator::getData(string str) {ّ
+_16_BIT Simulator::getData(string str) {
 
     if (str == "PC")
         return PC;
