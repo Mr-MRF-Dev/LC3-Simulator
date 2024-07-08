@@ -35,7 +35,7 @@ set(PROJECT_SOURCES
         src/simulator_window.h
         src/simulator_window.cpp
         ${ASSEMBLER_SOURCES}
-        ${SIMULATOR_SOURCESF}
+        ${SIMULATOR_SOURCES}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
