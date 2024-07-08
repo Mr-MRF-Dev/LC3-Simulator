@@ -80,3 +80,6 @@ build/
 
 # ignore tests
 test.cpp
+
+# archive
+*.zip
