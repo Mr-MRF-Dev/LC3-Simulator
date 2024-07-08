@@ -150,6 +150,13 @@ simErrCode Simulator::decode() {
         }
 
         else if (status == 4) {
+            MDR = arr[MAR];
+            msg = "MDR <- M[MAR]\n";
+            edit.push_back("MDR");
+            status++;
+        }
+
+        else if (status == 5) {
             MAR = MDR;
             msg = "MAR <- MDR\n";
             edit.push_back("MAR");
@@ -157,7 +164,7 @@ simErrCode Simulator::decode() {
 
         }
 
-        else if (status == 5) {
+        else if (status == 6) {
             MDR = arr[MAR];
             msg = "MDR <- M[MAR]\n";
             edit.push_back("MDR");
@@ -214,15 +221,95 @@ simErrCode Simulator::decode() {
     }
 
     else if (op_code == assembly_codes["ST"]) {
-        return ST(pc, src, code, labels);
+
+        if (status == 3) {
+            _16_BIT tmp = convertTo16BIT(IR, 9);
+            MAR = PC + tmp;
+            msg = "MAR <- PC + off9\n";
+            edit.push_back("MAR");
+            status++;
+        }
+
+        else if (status == 4) {
+            string sr = getRegs(IR, 9);
+            MDR = REGs[sr];
+            msg = "MDR <- SR\n";
+            edit.push_back("MDR");
+            status++;
+        }
+
+        else {
+            arr[MAR] = MDR;
+            msg = "M[MAR] <- MDR\n";
+            edit.push_back("ARR");
+            status = 0;
+        }
     }
 
     else if (op_code == assembly_codes["STI"]) {
-        return STI(pc, src, code, labels);
+        if (status == 3) {
+            _16_BIT tmp = convertTo16BIT(IR, 9);
+            MAR = PC + tmp;
+            msg = "MAR <- PC + off9\n";
+            edit.push_back("MAR");
+            status++;
+        }
+
+        else if (status == 4) {
+            MDR = arr[MAR];
+            msg = "MDR <- M[MAR]\n";
+            edit.push_back("MDR");
+            status++;
+        }
+
+        else if (status == 5) {
+            MAR = MDR;
+            msg = "MAR <- MDR\n";
+            edit.push_back("MAR");
+            status++;
+
+        }
+
+        else if (status == 6) {
+            string sr = getRegs(IR, 9);
+            MDR = REGs[sr];
+            msg = "MDR <- SR\n";
+            edit.push_back("MDR");
+            status++;
+        }
+
+        else {
+            arr[MAR] = MDR;
+            msg = "M[MAR] <- MDR\n";
+            edit.push_back("ARR");
+            status = 0;
+        }
     }
 
     else if (op_code == assembly_codes["STR"]) {
-        return STR(src, code);
+        if (status == 3) {
+            _16_BIT tmp = convertTo16BIT(IR, 6);
+            string baseR = getRegs(IR, 6);
+            MAR = REGs[baseR] + tmp;
+            msg = "MAR <- baseR + off6\n";
+            edit.push_back("MAR");
+            status++;
+        }
+
+        else if (status == 4) {
+            string sr = getRegs(IR, 9);
+            MDR = REGs[sr];
+            msg = "MDR <- SR\n";
+            edit.push_back("MDR");
+            status++;
+        }
+
+        else {
+            arr[MAR] = MDR;
+            msg = "M[MAR] <- MDR\n";
+            edit.push_back("ARR");
+            status = 0;
+        }
     }
 
     else if (op_code == assembly_codes["BR"]) {
