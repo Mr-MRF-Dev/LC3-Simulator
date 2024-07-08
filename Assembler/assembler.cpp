@@ -53,7 +53,13 @@ errorCode Assembler::core() {
     _16_BIT start_line = 0;
 
     for (auto i : codes) {
-        string op_code = i.front();
+
+        if (i.empty()) {
+            msg = "Error: Core: Empty Line\n";
+            return INVALID_CONSTANT;
+        }
+
+        string op_code = i[0];
 
         // ORG op code
         if (ASB.isORG(op_code)) {
@@ -165,6 +171,11 @@ void Assembler::tokenize(string str) {
             is_comment = false;
 
             if (!temp.empty()) {
+                if (temp.back() == SPACE_SYMBOL) {
+                    temp.pop_back();
+                    // remove last space
+                }
+
                 vec.push_back(temp);
                 temp.clear();
                 count = 0;
@@ -178,6 +189,11 @@ void Assembler::tokenize(string str) {
 
     // check for last code
     if (!temp.empty()) {
+        if (temp.back() == SPACE_SYMBOL) {
+            temp.pop_back();
+            // remove last space
+        }
+
         vec.push_back(temp);
         temp.clear();
         count = 0;
@@ -208,7 +224,6 @@ errorCode Assembler::createLabels() {
                       ASB.getMsg();
                 return lab;
             }
-
 
             lab = ASB.orgRange(new_pc);
 
