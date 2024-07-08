@@ -13,6 +13,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 include_directories(Assembler)
+include_directories(Simulator)
 
 set(ASSEMBLER_SOURCES
     Assembler/assembler.h
@@ -21,11 +22,18 @@ set(ASSEMBLER_SOURCES
     Assembler/assembly.cpp
 )
 
+set(SIMULATOR_SOURCES
+    Simulator/simulator.h
+    Simulator/simulator.cpp
+
+)
+
 set(PROJECT_SOURCES
         src/main.cpp
         src/assembler_window.h
         src/assembler_window.cpp
         ${ASSEMBLER_SOURCES}
+        ${SIMULATOR_SOURCESF}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
