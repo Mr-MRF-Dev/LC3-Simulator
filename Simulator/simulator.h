@@ -11,6 +11,8 @@
 #include "assembly_decode.h"
 using namespace std;
 
+typedef enum simErrCode { OK, CANT_RUN, OTHER_ERROR } simErrCode;
+
 class Simulator {
     private:
         AssemblyDecode ASB;
@@ -23,13 +25,17 @@ class Simulator {
         _16_BIT MAR;
         map<string, _16_BIT> REGs;
 
+        int status;
+
         string msg;
+        vector<string> edit;
         string file_path;
 
         // virtual memory
         _16_BIT arr[MEMORY_SIZE];
 
-        errorCode core();
+        simErrCode core();
+        simErrCode decode();
         void clear();
         void init();
 
@@ -37,10 +43,13 @@ class Simulator {
         Simulator();
         Simulator(string);
 
+        simErrCode step();
+
         void setFilePath(string);
         string getFilePath();
         bool openFile();
 
+        _16_BIT* getMem();
         // return the msg (Errors and status and ...)
         string getMsg();
 };
