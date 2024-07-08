@@ -67,6 +67,8 @@ class Simulator {
         _16_BIT* getMem();
         // return the msg (Errors and status and ...)
         string getMsg();
+        vector<string> getEdit();
+        _16_BIT getData(string);
 };
 
 #endif  // ASSEMBLER_H

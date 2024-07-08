@@ -18,7 +18,6 @@ void Simulator::init() {
 
     PC = 12288;  // x3000
     status = 0;
-    dec_state = 0;
 
     REGs = { { "R0", 0 }, { "R1", 0 }, { "R2", 0 }, { "R3", 0 },
              { "R4", 0 }, { "R5", 0 }, { "R6", 0 }, { "R7", 0 } };
@@ -42,7 +41,33 @@ string Simulator::getFilePath() { return file_path; }
 
 string Simulator::getMsg() { return msg; }
 
+vector<string> Simulator::getEdit() { return edit; }
+
 _16_BIT *Simulator::getMem() { return arr; }
+
+_16_BIT Simulator::getData(string str) {ّ
+
+    if (str == "PC")
+        return PC;
+    else if (str == "IR")
+        return IR;
+    else if (str == "MDR")
+        return MDR;
+    else if (str == "MAR")
+        return MAR;
+    else if (str[0] == 'R')
+        return REGs[str];
+    else if (str == "N")
+        return N;
+    else if (str == "P")
+        return P;
+    else if (str == "Z")
+        return Z;
+    else if (str == "ARR")
+        return arr[MAR];
+    else
+        return 0;
+}
 
 simErrCode Simulator::decode() {
 
@@ -313,26 +338,62 @@ simErrCode Simulator::decode() {
     }
 
     else if (op_code == assembly_codes["BR"]) {
-        return BR(pc, src, code, labels);
+
+        if ((N && (IR & 0x0800)) || (Z && (IR & 0x0400)) ||
+            (P && (IR & 0x0200))) {
+            _16_BIT tmp = convertTo16BIT(IR, 9);
+            PC = PC + tmp;
+            msg = "PC <- PC + off9\n";
+            edit.push_back("PC");
+        }
+        status = 0;
     }
 
-    else if (op_code == assembly_codes["JMP"]) {
-        return JMP(src, code);
+    else if (op_code == assembly_codes["JMP"] /* or RET */) {
+
+        string sr = getRegs(IR, 6);
+        PC = REGs[sr];
+        msg = "PC <- baseR\n";
+        edit.push_back("PC");
+        status = 0;
+
     }
 
-    else if (op_code == assembly_codes["RET"]) {
-        return RET(src, code);
+    // else if (op_code == assembly_codes["RET"]) {
+    //     return RET(src, code);
+    // }
+
+    else if (op_code == assembly_codes["JSR"] /* or JSRR */) {
+
+        _16_BIT tmpp = PC;
+        msg = "tmpp <- PC\n";
+        status++;
+
+        if (IR & 0x0800 != 0) {
+            _16_BIT tmp = convertTo16BIT(IR, 11);
+            PC = PC + tmp;
+            msg += "PC <- PC + off11\n";
+            edit.push_back("PC");
+        }
+
+        else {
+            string baseR = getRegs(IR, 6);
+            PC = REGs[baseR];
+            msg += "PC <- baseR\n";
+            edit.push_back("PC");
+        }
+        REGs["R7"] = tmpp;
+        edit.push_back("R7");
+        msg += "R7 <- tmpp\n";
+        status = 0;
     }
 
-    else if (op_code == assembly_codes["JSR"]) {
-        return JSR(pc, src, code, labels);
-    }
-
-    else if (op_code == assembly_codes["JSRR"]) {
-        return JSRR(src, code);
-    }
+    // else if (op_code == assembly_codes["JSRR"]) {
+    //     return JSRR(src, code);
+    // }
 
     else {
+        status = 0;
         return OTHER_ERROR;
     }
 
