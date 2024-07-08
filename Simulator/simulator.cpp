@@ -394,7 +394,7 @@ simErrCode Simulator::decode() {
 
     else {
         status = 0;
-        return OTHER_ERROR;
+        return ERROR;
     }
 
     return OK;
@@ -428,9 +428,11 @@ simErrCode Simulator::core() {
 
         // decode
         default:
-            decode();
+            return decode();
             break;
     }
+    
+    return OK;
 }
 
 simErrCode Simulator::step() {

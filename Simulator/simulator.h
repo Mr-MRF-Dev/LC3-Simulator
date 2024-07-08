@@ -1,5 +1,5 @@
-#ifndef ASSEMBLER_H
-#define ASSEMBLER_H
+#ifndef SIMULATOR_H
+#define SIMULATOR_H
 
 // includes
 #include <algorithm>
@@ -18,7 +18,7 @@ using namespace std;
 #define PROGRAM_BORDER 0xFE00        // start I/O memory
 typedef unsigned short int _16_BIT;  // 2 Byte ~ 16 bit
 
-typedef enum simErrCode { OK, CANT_RUN, OTHER_ERROR } simErrCode;
+typedef enum simErrCode { OK, CANT_RUN, ERROR } simErrCode;
 
 class Simulator {
     private:
@@ -66,4 +66,4 @@ class Simulator {
         _16_BIT getData(string);
 };
 
-#endif  // ASSEMBLER_H
+#endif  // SIMULATOR_H
