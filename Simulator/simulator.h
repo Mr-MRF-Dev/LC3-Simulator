@@ -37,7 +37,6 @@ class Simulator {
         map<string, _16_BIT> REGs;
 
         int status;
-        int dec_state;
 
         string msg;
         vector<string> edit;

@@ -54,24 +54,23 @@ simErrCode Simulator::decode() {
         string dr = getRegs(IR, 9);
 
         edit.push_back(dr);
-        edit.push_back(sr1);
 
         if (IR & 0x0020 == 0x0020) {
             // imm5
             tmp = convertTo16BIT(IR, 5);
-            msg = "ADD, DR, SR1, imm5\n";
+            msg = "DR <- SR1 + imm5\nsetCC()\n";
         }
 
         else {
             string sr2 = getRegs(IR, 0);
             tmp = REGs[sr2];
-            msg = "ADD, DR, SR1, SR2\n";
-            edit.push_back(sr2);
+            msg = "DR <- SR1 + SR2\nsetCC()\n";
         }
 
         tmp = tmp + REGs[sr1];
         setCC(tmp);
         REGs[dr] = tmp;
+        status = 0;
     }
 
     else if (op_code == assembly_codes["AND"]) {
@@ -80,44 +79,138 @@ simErrCode Simulator::decode() {
         string dr = getRegs(IR, 9);
 
         edit.push_back(dr);
-        edit.push_back(sr1);
 
         if (IR & 0x0020 == 0x0020) {
             // imm5
             tmp = convertTo16BIT(IR, 5);
-            msg = "AND, DR, SR1, imm5\n";
+            msg = "DR <- SR1 & imm5\nsetCC()\n";
         }
 
         else {
             string sr2 = getRegs(IR, 0);
             tmp = REGs[sr2];
-            msg = "AND, DR, SR1, SR2\n";
-            edit.push_back(sr2);
+            msg = "DR <- SR1 & SR2\nsetCC()\n";
         }
 
         tmp = tmp & REGs[sr1];
         setCC(tmp);
         REGs[dr] = tmp;
+        status = 0;
     }
 
     else if (op_code == assembly_codes["NOT"]) {
-        return NOT(src, code);
+        string sr1 = getRegs(IR, 6);
+        string dr = getRegs(IR, 9);
+
+        edit.push_back(dr);
+
+        msg = "DR <- !(SR)\nsetCC()\n";
+
+        _16_BIT tmp = REGs[sr1];
+        tmp = tmp ^ 0xffff;
+        setCC(tmp);
+        REGs[dr] = tmp;
+        status = 0;
     }
 
     else if (op_code == assembly_codes["LD"]) {
-        return LD(pc, src, code, labels);
+
+        if (status == 3) {
+            _16_BIT tmp = convertTo16BIT(IR, 9);
+            MAR = PC + tmp;
+            msg = "MAR <- PC + off9\n";
+            edit.push_back("MAR");
+            status++;
+        }
+
+        else if (status == 4) {
+            MDR = arr[MAR];
+            msg = "MDR <- M[MAR]\n";
+            edit.push_back("MDR");
+            status++;
+        }
+
+        else {
+            string dr = getRegs(IR, 9);
+            REGs[dr] = MDR;
+            setCC(MDR);
+            msg = "DR <- MDR\nsetCC()\n";
+            edit.push_back(dr);
+            status = 0;
+        }
     }
 
     else if (op_code == assembly_codes["LDI"]) {
-        return LDI(pc, src, code, labels);
+        if (status == 3) {
+            _16_BIT tmp = convertTo16BIT(IR, 9);
+            MAR = PC + tmp;
+            msg = "MAR <- PC + off9\n";
+            edit.push_back("MAR");
+            status++;
+        }
+
+        else if (status == 4) {
+            MAR = MDR;
+            msg = "MAR <- MDR\n";
+            edit.push_back("MAR");
+            status++;
+
+        }
+
+        else if (status == 5) {
+            MDR = arr[MAR];
+            msg = "MDR <- M[MAR]\n";
+            edit.push_back("MDR");
+            status++;
+        }
+
+        else {
+            string dr = getRegs(IR, 9);
+            REGs[dr] = MDR;
+            setCC(MDR);
+            msg = "DR <- MDR\nsetCC()\n";
+            edit.push_back(dr);
+            status = 0;
+        }
     }
 
     else if (op_code == assembly_codes["LDR"]) {
-        return LDR(src, code);
+        if (status == 3) {
+            _16_BIT tmp = convertTo16BIT(IR, 6);
+            string baseR = getRegs(IR, 6);
+            MAR = REGs[baseR] + tmp;
+            msg = "MAR <- baseR + off6\n";
+            edit.push_back("MAR");
+            status++;
+        }
+
+        else if (status == 4) {
+            MDR = arr[MAR];
+            msg = "MDR <- M[MAR]\n";
+            edit.push_back("MDR");
+            status++;
+        }
+
+        else {
+            string dr = getRegs(IR, 9);
+            REGs[dr] = MDR;
+            setCC(MDR);
+            msg = "DR <- MDR\nsetCC()\n";
+            edit.push_back(dr);
+            status = 0;
+        }
     }
 
     else if (op_code == assembly_codes["LEA"]) {
-        return LEA(pc, src, code, labels);
+
+        _16_BIT tmp = convertTo16BIT(IR, 9);
+        string DR = getRegs(IR, 9);
+        REGs[DR] = PC + tmp;
+        msg = "DR <- PC + off9\nsetCC()\n";
+        setCC(REGs[DR]);
+        edit.push_back(DR);
+        status = 0;
+
     }
 
     else if (op_code == assembly_codes["ST"]) {
@@ -164,7 +257,6 @@ simErrCode Simulator::core() {
     switch (status) {
         // fetch
         case 0:
-            dec_state = 0;
             msg = "MAR <- PC\nPC <- PC + 1\n";
             MAR = PC;
             PC++;
@@ -191,8 +283,6 @@ simErrCode Simulator::core() {
             decode();
             break;
     }
-
-    status++;
 }
 
 simErrCode Simulator::step() {
