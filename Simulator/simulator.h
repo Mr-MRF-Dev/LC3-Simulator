@@ -8,24 +8,36 @@
 #include <string>
 #include <vector>
 
-#include "assembly_decode.h"
 using namespace std;
+
+// define keywords
+#define SPLIT_SYMBOL '\n'
+#define COMMENT_SYMBOL ';'
+#define SPACE_SYMBOL ' '
+#define COMMA_SYMBOL ','
+#define BIN_FORMAT ".bin"
+#define DEFAULT_FILE_NAME "memory"
+
+#define MEMORY_SIZE 65536            // 64 * 1024
+#define PROGRAM_BORDER 0xFE00        // start I/O memory
+typedef unsigned short int _16_BIT;  // 2 Byte ~ 16 bit
+typedef short int _16_BIT_S;  // 2 Byte ~ 16 bit
 
 typedef enum simErrCode { OK, CANT_RUN, OTHER_ERROR } simErrCode;
 
 class Simulator {
     private:
-        AssemblyDecode ASB;
-
         bool run;
         bool N, Z, P;
         _16_BIT PC;
         _16_BIT IR;
         _16_BIT MDR;
         _16_BIT MAR;
+        map<string, _16_BIT> assembly_codes;
         map<string, _16_BIT> REGs;
 
         int status;
+        int dec_state;
 
         string msg;
         vector<string> edit;
@@ -36,6 +48,7 @@ class Simulator {
 
         simErrCode core();
         simErrCode decode();
+        void setCC(_16_BIT);
         void clear();
         void init();
 
@@ -48,6 +61,9 @@ class Simulator {
         void setFilePath(string);
         string getFilePath();
         bool openFile();
+
+        string getRegs(_16_BIT, int);
+        _16_BIT convertTo16BIT(_16_BIT, int);
 
         _16_BIT* getMem();
         // return the msg (Errors and status and ...)

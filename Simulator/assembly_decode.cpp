@@ -18,17 +18,6 @@ AssemblyDecode::AssemblyDecode() : msg("OK!") {
              { "R4", 4 }, { "R5", 5 }, { "R6", 6 }, { "R7", 7 } };
 }
 
-bool AssemblyDecode::isOpcode(string op_code) {
-
-    if (find(assembly_labels.begin(), assembly_labels.end(), op_code) !=
-        assembly_labels.end()) {
-        return true;
-    }
-
-    return false;
-}
-
-bool AssemblyDecode::isORG(string str) { return (str == assembly_labels.front()); }
 
 errorCode AssemblyDecode::encode(_16_BIT pc, _16_BIT* src, vector<string> code,
                            map<string, _16_BIT>& labels) {
@@ -132,71 +121,6 @@ errorCode AssemblyDecode::Variable(_16_BIT* final, vector<string> vec) {
     return OK_VALID;
 }
 
-errorCode AssemblyDecode::ADD(_16_BIT* final, vector<string> vec) {
-
-    // dr = vec[1]
-    // sr1 = vec[2]
-    // sr2 = vec[3]
-
-    // ADD  DR  SR1 0 00 SR2
-    // 0001 000 000 0 00 000
-
-    // ADD  DR  SR1 1 imm5
-    // 0001 000 000 1 00000
-
-    *final = assembly_codes["ADD"];
-    _16_BIT dr, sr1, sr2;
-
-    if (REGs.find(vec[1]) == REGs.end()) {
-        msg = "Error Add: bad DR\n";
-        return INVALID_REG;
-    }
-
-    dr = REGs[vec[1]];
-
-    if (REGs.find(vec[2]) == REGs.end()) {
-        msg = "Error Add: bad SR1\n";
-        return INVALID_REG;
-    }
-
-    sr1 = REGs[vec[2]];
-
-    if (REGs.find(vec[3]) == REGs.end()) {
-
-        int imm5;
-        errorCode lab = convertNumberFormat(&imm5, vec[3]);
-
-        if (lab != OK_VALID) {
-            return lab;
-        }
-
-        lab = imm5Range(imm5);
-
-        if (lab != OK_VALID) {
-            return lab;
-        }
-
-        // set the flag
-        *final += 32;  // 1 00000
-
-        // shfit the 5 bit of imm5 into final
-        shiftCopy(final, imm5, 5);
-    }
-
-    else {
-        // set the sr2
-        sr2 = REGs[vec[3]];
-        *final += sr2;
-    }
-
-    // set the sr1 and dr
-    sr1 <<= 6;
-    *final += sr1;
-    dr <<= 9;
-    *final += dr;
-
-    return OK_VALID;
-}
 
 errorCode AssemblyDecode::AND(_16_BIT* final, vector<string> vec) {
 

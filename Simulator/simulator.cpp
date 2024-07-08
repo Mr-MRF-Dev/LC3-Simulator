@@ -18,9 +18,17 @@ void Simulator::init() {
 
     PC = 12288;  // x3000
     status = 0;
+    dec_state = 0;
 
     REGs = { { "R0", 0 }, { "R1", 0 }, { "R2", 0 }, { "R3", 0 },
              { "R4", 0 }, { "R5", 0 }, { "R6", 0 }, { "R7", 0 } };
+
+    assembly_codes = { { "ADD", 0x1000 }, { "AND", 0x5000 }, { "BR", 0x0000 },
+                       { "JMP", 0xc000 }, { "JSR", 0x4000 }, { "JSRR", 0x4000 },
+                       { "LD", 0x2000 },  { "LDI", 0xa000 }, { "LDR", 0x6000 },
+                       { "LEA", 0xe000 }, { "NOT", 0x9000 }, { "RET", 0xc000 },
+                       { "RTI", 0x8000 }, { "ST", 0x3000 },  { "STR", 0x7000 },
+                       { "TRAP", 0xf000 } };
 
     run = false;
     N = false;
@@ -36,13 +44,127 @@ string Simulator::getMsg() { return msg; }
 
 _16_BIT *Simulator::getMem() { return arr; }
 
-simErrCode Simulator::decode() { return OK; }
+simErrCode Simulator::decode() {
+
+    _16_BIT op_code = IR & 0xf000;
+
+    if (op_code == assembly_codes["ADD"]) {
+        _16_BIT tmp;
+        string sr1 = getRegs(IR, 6);
+        string dr = getRegs(IR, 9);
+
+        edit.push_back(dr);
+        edit.push_back(sr1);
+
+        if (IR & 0x0020 == 0x0020) {
+            // imm5
+            tmp = convertTo16BIT(IR, 5);
+            msg = "ADD, DR, SR1, imm5\n";
+        }
+
+        else {
+            string sr2 = getRegs(IR, 0);
+            tmp = REGs[sr2];
+            msg = "ADD, DR, SR1, SR2\n";
+            edit.push_back(sr2);
+        }
+
+        tmp = tmp + REGs[sr1];
+        setCC(tmp);
+        REGs[dr] = tmp;
+    }
+
+    else if (op_code == assembly_codes["AND"]) {
+        _16_BIT tmp;
+        string sr1 = getRegs(IR, 6);
+        string dr = getRegs(IR, 9);
+
+        edit.push_back(dr);
+        edit.push_back(sr1);
+
+        if (IR & 0x0020 == 0x0020) {
+            // imm5
+            tmp = convertTo16BIT(IR, 5);
+            msg = "AND, DR, SR1, imm5\n";
+        }
+
+        else {
+            string sr2 = getRegs(IR, 0);
+            tmp = REGs[sr2];
+            msg = "AND, DR, SR1, SR2\n";
+            edit.push_back(sr2);
+        }
+
+        tmp = tmp & REGs[sr1];
+        setCC(tmp);
+        REGs[dr] = tmp;
+    }
+
+    else if (op_code == assembly_codes["NOT"]) {
+        return NOT(src, code);
+    }
+
+    else if (op_code == assembly_codes["LD"]) {
+        return LD(pc, src, code, labels);
+    }
+
+    else if (op_code == assembly_codes["LDI"]) {
+        return LDI(pc, src, code, labels);
+    }
+
+    else if (op_code == assembly_codes["LDR"]) {
+        return LDR(src, code);
+    }
+
+    else if (op_code == assembly_codes["LEA"]) {
+        return LEA(pc, src, code, labels);
+    }
+
+    else if (op_code == assembly_codes["ST"]) {
+        return ST(pc, src, code, labels);
+    }
+
+    else if (op_code == assembly_codes["STI"]) {
+        return STI(pc, src, code, labels);
+    }
+
+    else if (op_code == assembly_codes["STR"]) {
+        return STR(src, code);
+    }
+
+    else if (op_code == assembly_codes["BR"]) {
+        return BR(pc, src, code, labels);
+    }
+
+    else if (op_code == assembly_codes["JMP"]) {
+        return JMP(src, code);
+    }
+
+    else if (op_code == assembly_codes["RET"]) {
+        return RET(src, code);
+    }
+
+    else if (op_code == assembly_codes["JSR"]) {
+        return JSR(pc, src, code, labels);
+    }
+
+    else if (op_code == assembly_codes["JSRR"]) {
+        return JSRR(src, code);
+    }
+
+    else {
+        return OTHER_ERROR;
+    }
+
+    return OK;
+}
 
 simErrCode Simulator::core() {
 
     switch (status) {
         // fetch
         case 0:
+            dec_state = 0;
             msg = "MAR <- PC\nPC <- PC + 1\n";
             MAR = PC;
             PC++;
@@ -74,6 +196,7 @@ simErrCode Simulator::core() {
 }
 
 simErrCode Simulator::step() {
+
     edit.clear();
 
     if (!run) {
@@ -118,6 +241,58 @@ bool Simulator::openFile() {
             "Error: Exception occurred during file I/O.\n\n" + string(e.what());
         return false;
     }
+}
+
+string Simulator::getRegs(_16_BIT num, int count) {
+
+    _16_BIT tmp = 7;  // 0000 0000 0000 0111
+    if (count != 0) num >>= count;
+
+    tmp = tmp & num;
+    if (tmp == 0) return "R0";
+    if (tmp == 1) return "R1";
+    if (tmp == 2) return "R2";
+    if (tmp == 3) return "R3";
+    if (tmp == 4) return "R4";
+    if (tmp == 5) return "R5";
+    if (tmp == 6) return "R6";
+    if (tmp == 7) return "R7";
+
+    return "R0";
+}
+
+_16_BIT Simulator::convertTo16BIT(_16_BIT num, int count) {
+
+    _16_BIT f = 0;
+
+    for (int i = 0; i < count - 1; i++, num >>= 1) {
+
+        if (num % 2 != 0) {
+            _16_BIT tmp = 1;
+            tmp <<= i;
+            f += tmp;
+        }
+    }
+
+    if (num % 2 != 0) {
+        for (int i = 0; i < 16 - count + 1; i++) {
+            _16_BIT tmp = 1;
+            tmp <<= i;
+            f += tmp;
+        }
+    }
+}
+
+void Simulator::setCC(_16_BIT num) {
+    Z = 0;
+    P = 0;
+    N = 0;
+
+    if (num == 0) Z = 1;
+    if (num >> 15 == 1)
+        N = 1;
+    else
+        P = 1;
 }
 
 // EOF

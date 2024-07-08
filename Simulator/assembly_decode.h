@@ -1,34 +1,6 @@
 #ifndef ASSEMBLY_DECODE_H
 #define ASSEMBLY_DECODE_H
 
-// define keywords
-#define SPLIT_SYMBOL '\n'
-#define COMMENT_SYMBOL ';'
-#define SPACE_SYMBOL ' '
-#define COMMA_SYMBOL ','
-#define BIN_FORMAT ".bin"
-#define DEFAULT_FILE_NAME "memory"
-
-#define MEMORY_SIZE 65536            // 64 * 1024
-#define PROGRAM_BORDER 0xFE00        // start I/O memory
-typedef unsigned short int _16_BIT;  // 2 Byte ~ 16 bit
-
-// type of Errors
-typedef enum errorCode {
-    OK_VALID,            /* No Error */
-    UNDEFINED_LABEL,     /* LABEL used without definition */
-    INVALID_LABEL,       /* Duplicate label used or label not found */
-    INVALID_OPCODE,      /* OPCODE doesn't exist in ISA */
-    INVALID_CONSTANT,    /* Illegal use of CONSTANT operand */
-    INVALID_NUMBER,      /* invalid number format */
-    NUMBER_OUT_OF_RANGE, /* when number out of range */
-    INVALID_ORG,         /* when the org number is invalid */
-    INVALID_REG,         /* invalid register used */
-    INVALID_NZP,         /* invalid n z p flags */
-    OTHER_ERROR          /* All other errors */
-
-} errorCode;
-
 // includes
 #include <algorithm>
 #include <iostream>
@@ -73,8 +45,6 @@ class AssemblyDecode {
 
     public:
         AssemblyDecode();
-        bool isOpcode(string);
-        bool isORG(string);
 
         errorCode imm5Range(int);
         errorCode orgRange(int);
