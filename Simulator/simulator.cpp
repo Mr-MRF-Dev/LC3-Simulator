@@ -402,7 +402,7 @@ simErrCode Simulator::decode() {
     //     return JSRR(src, code);
     // }
 
-    else if(op_code == assembly_codes["HALT"]) {
+    else if (op_code == assembly_codes["HALT"]) {
         msg += "halt\n";
         run = false;
         status = 0;
@@ -483,8 +483,8 @@ bool Simulator::openFile() {
 
             infile.close();
             msg = "Done!";
-            run = true;
             init();
+            run = true;
             return true;
         }
 
