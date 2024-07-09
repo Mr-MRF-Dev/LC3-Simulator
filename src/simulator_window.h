@@ -8,6 +8,8 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QTableWidget>
+#include <QHeaderView>
 
 #include "simulator.h"
 
@@ -16,6 +18,7 @@ class SimulatorWindow : public QWidget {
 
 private:
     Simulator* Sim;
+    QTableWidget* ram;
 
     QLineEdit* file_name_lineE;
     QLineEdit* pc;

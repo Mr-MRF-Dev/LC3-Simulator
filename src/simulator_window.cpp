@@ -31,11 +31,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     QVBoxLayout* line1 = new QVBoxLayout;
     line1->addWidget(line1_label);
 
-    QLabel* line2_label = new QLabel(this);
-    line2_label->setText(">>");
-
-    QVBoxLayout* line2 = new QVBoxLayout;
-    line2->addWidget(line2_label);
 
 
     QLabel* con = new QLabel(this);
@@ -305,10 +300,37 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     l_body->addLayout(lr_14);
     l_body->addLayout(lr_58);
 
+    ram = new QTableWidget(this);
+    ram->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ram->setRowCount(MEMORY_SIZE);
+    ram->setColumnCount(2);
+    ram->verticalHeader()->setVisible(false);
+
+
+    QTableWidgetItem *newItem = new QTableWidgetItem("Address", 0);
+    ram->setHorizontalHeaderItem(0, newItem);
+    newItem = new QTableWidgetItem("Value", 0);
+    ram->setHorizontalHeaderItem(1, newItem);
+
+    ram->setMaximumWidth(220);
+
+    for (int i=0; i < MEMORY_SIZE; i++) {
+        QTableWidgetItem *newItem = new QTableWidgetItem(QString("0x%1").arg(i, 4, 16, QLatin1Char( '0' )), 0);
+        ram->setItem(i, 0,  newItem);
+    }
+
+    QLabel* lab_ram = new QLabel;
+    lab_ram->setText("« RAM »");
+    lab_ram->setAlignment(Qt::AlignCenter);
+
+    QVBoxLayout* l_ram = new QVBoxLayout;
+    l_ram->addWidget(lab_ram);
+    l_ram->addWidget(ram);
+
+    // set main
     QHBoxLayout* l_main = new QHBoxLayout(this);
+    l_main->addLayout(l_ram);
     l_main->addLayout(line1);
-    // add table
-    l_main->addLayout(line2);
     l_main->addLayout(l_body);
 
 }
