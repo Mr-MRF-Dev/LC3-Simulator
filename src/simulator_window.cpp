@@ -31,14 +31,13 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     QVBoxLayout* line1 = new QVBoxLayout;
     line1->addWidget(line1_label);
 
-
-
-    QLabel* con = new QLabel(this);
-    con->setText("MMD\n");
+    console = new QLabel(this);
+    console->setText(">>> open file\n");
+    console->setStyleSheet("border: 1px solid gray;");
 
     QVBoxLayout* l_con = new QVBoxLayout;
     l_con->addLayout(fn_layout);
-    l_con->addWidget(con);
+    l_con->addWidget(console);
 
     ///////////////// PC
     QLabel* lab_pc = new QLabel;
@@ -333,11 +332,90 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     l_main->addLayout(line1);
     l_main->addLayout(l_body);
 
+    // init();
 }
 
 void SimulatorWindow::openFile() {
     // load file path
     Sim->setFilePath(file_name_lineE->text().toStdString());
+
+    // open file
+    if (Sim->openFile()) {
+        console->setText(QString::fromStdString(Sim->getMsg()));
+        this->init();
+    }
+
+    else {
+        console->setText(QString::fromStdString(Sim->getMsg()));
+    }
 }
 
+void SimulatorWindow::init() {
 
+    // pc
+    auto num = Sim->getData("PC");
+    pc->setText(QString::fromStdString(to_string(num)));
+
+    // ir
+    num = Sim->getData("IR");
+    ir->setText(QString::fromStdString(to_string(num)));
+
+    // mdr
+    num = Sim->getData("MDR");
+    mdr->setText(QString::fromStdString(to_string(num)));
+
+    // mar
+    num = Sim->getData("MAR");
+    mar->setText(QString::fromStdString(to_string(num)));
+
+    // n
+    num = Sim->getData("N");
+    n->setText(QString::fromStdString(to_string(num)));
+
+    // p
+    num = Sim->getData("P");
+    p->setText(QString::fromStdString(to_string(num)));
+
+    // z
+    num = Sim->getData("Z");
+    z->setText(QString::fromStdString(to_string(num)));
+
+    // r0
+    num = Sim->getData("R0");
+    r0->setText(QString::fromStdString(to_string(num)));
+
+    // r1
+    num = Sim->getData("R1");
+    r1->setText(QString::fromStdString(to_string(num)));
+
+    // r2
+    num = Sim->getData("R2");
+    r2->setText(QString::fromStdString(to_string(num)));
+
+    // r3
+    num = Sim->getData("R3");
+    r3->setText(QString::fromStdString(to_string(num)));
+
+    // r4
+    num = Sim->getData("R4");
+    r4->setText(QString::fromStdString(to_string(num)));
+
+    // r5
+    num = Sim->getData("R5");
+    r5->setText(QString::fromStdString(to_string(num)));
+
+    // r6
+    num = Sim->getData("R6");
+    r6->setText(QString::fromStdString(to_string(num)));
+
+    // r7
+    num = Sim->getData("R7");
+    r7->setText(QString::fromStdString(to_string(num)));
+
+    // load ram into ram table
+    _16_BIT* load_ram = Sim->getMem();
+    for (int i=0; i < MEMORY_SIZE; i++) {
+        QTableWidgetItem *newItem = new QTableWidgetItem(QString("0x%1").arg(load_ram[i], 4, 16, QLatin1Char( '0' )), 0);
+        ram->setItem(i, 1,  newItem);
+    }
+}

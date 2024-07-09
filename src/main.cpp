@@ -6,8 +6,8 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    // AssemblerWindow s;
-    // s.show();
+    AssemblerWindow s;
+    s.show();
 
     SimulatorWindow sim;
     sim.show();

@@ -19,6 +19,7 @@ class SimulatorWindow : public QWidget {
 private:
     Simulator* Sim;
     QTableWidget* ram;
+    QLabel* console;
 
     QLineEdit* file_name_lineE;
     QLineEdit* pc;
@@ -38,11 +39,14 @@ private:
     QLineEdit* r6;
     QLineEdit* r7;
 
+    void init();
+
 public:
     SimulatorWindow(QWidget *parent = nullptr);
 
 public slots:
     void openFile();
+
 };
 
 #endif // SIMULATOR_WINDOW_H

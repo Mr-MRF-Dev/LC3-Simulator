@@ -19,6 +19,10 @@ void Simulator::init() {
     PC = 12288;  // x3000
     status = 0;
 
+    MDR = 0;
+    MAR = 0;
+    IR = 0;
+    
     REGs = { { "R0", 0 }, { "R1", 0 }, { "R2", 0 }, { "R3", 0 },
              { "R4", 0 }, { "R5", 0 }, { "R6", 0 }, { "R7", 0 } };
 
@@ -431,7 +435,7 @@ simErrCode Simulator::core() {
             return decode();
             break;
     }
-    
+
     return OK;
 }
 
@@ -460,7 +464,7 @@ bool Simulator::openFile() {
         std::ifstream infile(file_path, std::ios::in | std::ios::binary);
         if (infile.is_open()) {
             for (int i = 0; i < MEMORY_SIZE; i++) {
-                char *tmp = "12";
+                // char *tmp = "12";
                 infile.read(reinterpret_cast<char *>(&arr[i]), sizeof(_16_BIT));
             }
 
@@ -521,6 +525,8 @@ _16_BIT Simulator::convertTo16BIT(_16_BIT num, int count) {
             f += tmp;
         }
     }
+
+    return f;
 }
 
 void Simulator::setCC(_16_BIT num) {
