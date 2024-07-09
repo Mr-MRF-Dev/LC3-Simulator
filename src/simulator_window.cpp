@@ -32,19 +32,24 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     line1->addWidget(line1_label);
 
     console = new QLabel(this);
-    console->setText(">>> open file\n");
+    console->setText("open file\n");
     console->setStyleSheet("border: 1px solid gray;");
+
+    step = new QPushButton;
+    step->setEnabled(false);
+    step->setText("Step");
+    connect(step, &QPushButton::clicked, this, &SimulatorWindow::stepFunc);
 
     QVBoxLayout* l_con = new QVBoxLayout;
     l_con->addLayout(fn_layout);
     l_con->addWidget(console);
+    l_con->addWidget(step);
 
     ///////////////// PC
     QLabel* lab_pc = new QLabel;
     lab_pc->setText("PC:");
 
     pc = new QLineEdit(this);
-    pc->setText(QString("-"));
     pc->setEnabled(false);
 
     QHBoxLayout* l_pc = new QHBoxLayout;
@@ -57,7 +62,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_ir->setText("IR:");
 
     ir = new QLineEdit(this);
-    ir->setText(QString("-"));
     ir->setEnabled(false);
 
     QHBoxLayout* l_ir = new QHBoxLayout;
@@ -70,7 +74,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_mdr->setText("MDR:");
 
     mdr = new QLineEdit(this);
-    mdr->setText(QString("-"));
     mdr->setEnabled(false);
 
     QHBoxLayout* l_mdr = new QHBoxLayout;
@@ -83,7 +86,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_mar->setText("MAR:");
 
     mar = new QLineEdit(this);
-    mar->setText(QString("-"));
     mar->setEnabled(false);
 
     QHBoxLayout* l_mar = new QHBoxLayout;
@@ -98,7 +100,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_n->setText("N:");
 
     n = new QLineEdit(this);
-    n->setText(QString("-"));
     n->setEnabled(false);
 
     QHBoxLayout* l_n = new QHBoxLayout;
@@ -110,7 +111,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_z->setText("Z:");
 
     z = new QLineEdit(this);
-    z->setText(QString("-"));
     z->setEnabled(false);
 
     QHBoxLayout* l_z = new QHBoxLayout;
@@ -122,7 +122,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_p->setText("P:");
 
     p = new QLineEdit(this);
-    p->setText(QString("-"));
     p->setEnabled(false);
 
     QHBoxLayout* l_p = new QHBoxLayout;
@@ -164,7 +163,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_r0->setAlignment(Qt::AlignCenter);
 
     r0 = new QLineEdit(this);
-    r0->setText(QString("-"));
     r0->setAlignment(Qt::AlignCenter);
     r0->setEnabled(false);
 
@@ -179,7 +177,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_r1->setAlignment(Qt::AlignCenter);
 
     r1 = new QLineEdit(this);
-    r1->setText(QString("-"));
     r1->setAlignment(Qt::AlignCenter);
     r1->setEnabled(false);
 
@@ -195,7 +192,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_r2->setAlignment(Qt::AlignCenter);
 
     r2 = new QLineEdit(this);
-    r2->setText(QString("-"));
     r2->setAlignment(Qt::AlignCenter);
     r2->setEnabled(false);
 
@@ -210,7 +206,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_r3->setAlignment(Qt::AlignCenter);
 
     r3 = new QLineEdit(this);
-    r3->setText(QString("-"));
     r3->setAlignment(Qt::AlignCenter);
     r3->setEnabled(false);
 
@@ -225,7 +220,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_r4->setAlignment(Qt::AlignCenter);
 
     r4 = new QLineEdit(this);
-    r4->setText(QString("-"));
     r4->setAlignment(Qt::AlignCenter);
     r4->setEnabled(false);
 
@@ -240,7 +234,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_r5->setAlignment(Qt::AlignCenter);
 
     r5 = new QLineEdit(this);
-    r5->setText(QString("-"));
     r5->setAlignment(Qt::AlignCenter);
     r5->setEnabled(false);
 
@@ -255,7 +248,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_r6->setAlignment(Qt::AlignCenter);
 
     r6 = new QLineEdit(this);
-    r6->setText(QString("-"));
     r6->setAlignment(Qt::AlignCenter);
     r6->setEnabled(false);
 
@@ -270,7 +262,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     lab_r7->setAlignment(Qt::AlignCenter);
 
     r7 = new QLineEdit(this);
-    r7->setText(QString("-"));
     r7->setAlignment(Qt::AlignCenter);
     r7->setEnabled(false);
 
@@ -332,7 +323,13 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     l_main->addLayout(line1);
     l_main->addLayout(l_body);
 
-    // init();
+    claer();
+}
+
+void SimulatorWindow::stepFunc() {
+
+
+
 }
 
 void SimulatorWindow::openFile() {
@@ -341,16 +338,19 @@ void SimulatorWindow::openFile() {
 
     // open file
     if (Sim->openFile()) {
-        console->setText(QString::fromStdString(Sim->getMsg()));
-        this->init();
+        init();
     }
 
     else {
-        console->setText(QString::fromStdString(Sim->getMsg()));
+        clear();
     }
+
+    console->setText(QString::fromStdString(Sim->getMsg()));
 }
 
 void SimulatorWindow::init() {
+
+    step->setEnabled(true);
 
     // pc
     auto num = Sim->getData("PC");
@@ -416,6 +416,62 @@ void SimulatorWindow::init() {
     _16_BIT* load_ram = Sim->getMem();
     for (int i=0; i < MEMORY_SIZE; i++) {
         QTableWidgetItem *newItem = new QTableWidgetItem(QString("0x%1").arg(load_ram[i], 4, 16, QLatin1Char( '0' )), 0);
+        ram->setItem(i, 1,  newItem);
+    }
+}
+
+void SimulatorWindow::clear() {
+
+    step->setEnabled(false);
+
+    // pc
+    pc->setText("-");
+
+    // ir
+    ir->setText("-");
+
+    // mdr
+    mdr->setText("-");
+
+    // mar
+    mar->setText("-");
+
+    // n
+   n->setText("-");
+
+    // p
+    p->setText("-");
+
+    // z
+    z->setText("-");
+
+    // r0
+    r0->setText("-");
+
+    // r1
+    r1->setText("-");
+
+    // r2
+    r2->setText("-");
+
+    // r3
+    r3->setText("-");
+
+    // r4
+    r4->setText("-");
+
+    // r5
+    r5->setText("-");
+
+    // r6
+    r6->setText("-");
+
+    // r7
+    r7->setText("-");
+
+    // claer ram into ram table
+    for (int i=0; i < MEMORY_SIZE; i++) {
+        QTableWidgetItem *newItem = new QTableWidgetItem("", 0);
         ram->setItem(i, 1,  newItem);
     }
 }

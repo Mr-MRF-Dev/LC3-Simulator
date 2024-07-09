@@ -20,6 +20,7 @@ private:
     Simulator* Sim;
     QTableWidget* ram;
     QLabel* console;
+    QPushButton* step;
 
     QLineEdit* file_name_lineE;
     QLineEdit* pc;
@@ -40,12 +41,14 @@ private:
     QLineEdit* r7;
 
     void init();
+    void claer();
 
 public:
     SimulatorWindow(QWidget *parent = nullptr);
 
 public slots:
     void openFile();
+    void stepFunc();
 
 };
 
