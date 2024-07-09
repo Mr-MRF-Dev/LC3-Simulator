@@ -327,8 +327,122 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
 
 void SimulatorWindow::stepFunc() {
 
+    console->setStyleSheet("color:black;");
 
+    simErrCode err = Sim->step();
+    console->setText(QString::fromStdString(Sim->getMsg()));
 
+    if (err != OK) {
+        console->setStyleSheet("color:red;");
+    }
+
+    // update datas
+    update();
+
+    // or call init function :)))
+    // init();
+}
+
+void SimulatorWindow::update() {
+
+    for (auto i : Sim->getEdit()) {
+        if (i == "PC") {
+            auto num = Sim->getData("PC");
+            pc->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // ir
+        else if (i == "IR") {
+            auto num = Sim->getData("IR");
+            ir->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // mdr
+        else if (i == "MDR") {
+            auto num = Sim->getData("MDR");
+            mdr->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // mar
+        else if (i == "MAR") {
+            auto num = Sim->getData("MAR");
+            mar->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // n
+        else if (i == "N") {
+            auto num = Sim->getData("N");
+            n->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // p
+        else if (i == "P") {
+            auto num = Sim->getData("P");
+            p->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // z
+        else if (i == "Z") {
+            auto num = Sim->getData("Z");
+            z->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // r0
+        else if (i == "R0") {
+            auto num = Sim->getData("R0");
+            r0->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // r1
+        else if (i == "R1") {
+            auto num = Sim->getData("R1");
+            r1->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // r2
+        else if (i == "R2") {
+            auto num = Sim->getData("R2");
+            r2->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // r3
+        else if (i == "R3") {
+            auto num = Sim->getData("R3");
+            r3->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // r4
+        else if (i == "R4") {
+            auto num = Sim->getData("R4");
+            r4->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // r5
+        else if (i == "R5") {
+            auto num = Sim->getData("R5");
+            r5->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // r6
+        else if (i == "R6") {
+            auto num = Sim->getData("R6");
+            r6->setText(QString::fromStdString(to_string(num)));
+        }
+
+        // r7
+        else if (i == "R7") {
+            auto num = Sim->getData("R7");
+            r7->setText(QString::fromStdString(to_string(num)));
+        }
+
+        else if (i == "ARR") {
+            auto addr = Sim->getData("MAR");
+            auto new_val = Sim->getData("ARR");
+
+            // edit table
+            ram->item(addr, 1)->setText(QString("0x%1").arg(new_val, 4, 16, QLatin1Char( '0' )));
+        }
+    }
 }
 
 void SimulatorWindow::openFile() {
@@ -349,6 +463,7 @@ void SimulatorWindow::openFile() {
 
 void SimulatorWindow::init() {
 
+    console->setStyleSheet("color:black;");
     step->setEnabled(true);
 
     // pc
@@ -421,6 +536,7 @@ void SimulatorWindow::init() {
 
 void SimulatorWindow::clear() {
 
+    console->setStyleSheet("color:black;");
     step->setEnabled(false);
 
     // pc

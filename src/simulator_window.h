@@ -42,6 +42,7 @@ private:
 
     void init();
     void clear();
+    void update();
 
 public:
     SimulatorWindow(QWidget *parent = nullptr);
