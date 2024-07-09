@@ -16,22 +16,27 @@ Simulator::Simulator(string s) : msg("OK!") {
 
 void Simulator::init() {
 
-    PC = 12288;  // x3000
+    PC = 0x3000;  // x3000
     status = 0;
 
     MDR = 0;
     MAR = 0;
     IR = 0;
-    
+
+    REGs.clear();
+    assembly_codes.clear();
+
     REGs = { { "R0", 0 }, { "R1", 0 }, { "R2", 0 }, { "R3", 0 },
              { "R4", 0 }, { "R5", 0 }, { "R6", 0 }, { "R7", 0 } };
 
-    assembly_codes = { { "ADD", 0x1000 }, { "AND", 0x5000 }, { "BR", 0x0000 },
-                       { "JMP", 0xc000 }, { "JSR", 0x4000 }, { "JSRR", 0x4000 },
-                       { "LD", 0x2000 },  { "LDI", 0xa000 }, { "LDR", 0x6000 },
-                       { "LEA", 0xe000 }, { "NOT", 0x9000 }, { "RET", 0xc000 },
-                       { "RTI", 0x8000 }, { "ST", 0x3000 },  { "STR", 0x7000 },
-                       { "TRAP", 0xf000 } };
+    assembly_codes = {
+        { "ADD", 0x1000 },  { "AND", 0x5000 }, { "BR", 0x0000 },
+        { "JMP", 0xc000 },  { "JSR", 0x4000 }, { "JSRR", 0x4000 },
+        { "LD", 0x2000 },   { "LDI", 0xa000 }, { "LDR", 0x6000 },
+        { "LEA", 0xe000 },  { "NOT", 0x9000 }, { "RET", 0xc000 },
+        { "RTI", 0x8000 },  { "ST", 0x3000 },  { "STR", 0x7000 },
+        { "TRAP", 0xf000 }, { "STI", 0xb000 }
+    };
 
     run = false;
     N = false;
@@ -87,13 +92,13 @@ simErrCode Simulator::decode() {
         if (IR & 0x0020 == 0x0020) {
             // imm5
             tmp = convertTo16BIT(IR, 5);
-            msg = "DR <- SR1 + imm5\nsetCC()\n";
+            msg += "DR <- SR1 + imm5\nsetCC()\n";
         }
 
         else {
             string sr2 = getRegs(IR, 0);
             tmp = REGs[sr2];
-            msg = "DR <- SR1 + SR2\nsetCC()\n";
+            msg += "DR <- SR1 + SR2\nsetCC()\n";
         }
 
         tmp = tmp + REGs[sr1];
@@ -112,13 +117,13 @@ simErrCode Simulator::decode() {
         if (IR & 0x0020 == 0x0020) {
             // imm5
             tmp = convertTo16BIT(IR, 5);
-            msg = "DR <- SR1 & imm5\nsetCC()\n";
+            msg += "DR <- SR1 & imm5\nsetCC()\n";
         }
 
         else {
             string sr2 = getRegs(IR, 0);
             tmp = REGs[sr2];
-            msg = "DR <- SR1 & SR2\nsetCC()\n";
+            msg += "DR <- SR1 & SR2\nsetCC()\n";
         }
 
         tmp = tmp & REGs[sr1];
@@ -133,7 +138,7 @@ simErrCode Simulator::decode() {
 
         edit.push_back(dr);
 
-        msg = "DR <- !(SR)\nsetCC()\n";
+        msg += "DR <- !(SR)\nsetCC()\n";
 
         _16_BIT tmp = REGs[sr1];
         tmp = tmp ^ 0xffff;
@@ -147,14 +152,14 @@ simErrCode Simulator::decode() {
         if (status == 3) {
             _16_BIT tmp = convertTo16BIT(IR, 9);
             MAR = PC + tmp;
-            msg = "MAR <- PC + off9\n";
+            msg += "MAR <- PC + off9\n";
             edit.push_back("MAR");
             status++;
         }
 
         else if (status == 4) {
             MDR = arr[MAR];
-            msg = "MDR <- M[MAR]\n";
+            msg += "MDR <- M[MAR]\n";
             edit.push_back("MDR");
             status++;
         }
@@ -163,7 +168,7 @@ simErrCode Simulator::decode() {
             string dr = getRegs(IR, 9);
             REGs[dr] = MDR;
             setCC(MDR);
-            msg = "DR <- MDR\nsetCC()\n";
+            msg += "DR <- MDR\nsetCC()\n";
             edit.push_back(dr);
             status = 0;
         }
@@ -173,21 +178,21 @@ simErrCode Simulator::decode() {
         if (status == 3) {
             _16_BIT tmp = convertTo16BIT(IR, 9);
             MAR = PC + tmp;
-            msg = "MAR <- PC + off9\n";
+            msg += "MAR <- PC + off9\n";
             edit.push_back("MAR");
             status++;
         }
 
         else if (status == 4) {
             MDR = arr[MAR];
-            msg = "MDR <- M[MAR]\n";
+            msg += "MDR <- M[MAR]\n";
             edit.push_back("MDR");
             status++;
         }
 
         else if (status == 5) {
             MAR = MDR;
-            msg = "MAR <- MDR\n";
+            msg += "MAR <- MDR\n";
             edit.push_back("MAR");
             status++;
 
@@ -195,7 +200,7 @@ simErrCode Simulator::decode() {
 
         else if (status == 6) {
             MDR = arr[MAR];
-            msg = "MDR <- M[MAR]\n";
+            msg += "MDR <- M[MAR]\n";
             edit.push_back("MDR");
             status++;
         }
@@ -204,7 +209,7 @@ simErrCode Simulator::decode() {
             string dr = getRegs(IR, 9);
             REGs[dr] = MDR;
             setCC(MDR);
-            msg = "DR <- MDR\nsetCC()\n";
+            msg += "DR <- MDR\nsetCC()\n";
             edit.push_back(dr);
             status = 0;
         }
@@ -215,14 +220,14 @@ simErrCode Simulator::decode() {
             _16_BIT tmp = convertTo16BIT(IR, 6);
             string baseR = getRegs(IR, 6);
             MAR = REGs[baseR] + tmp;
-            msg = "MAR <- baseR + off6\n";
+            msg += "MAR <- baseR + off6\n";
             edit.push_back("MAR");
             status++;
         }
 
         else if (status == 4) {
             MDR = arr[MAR];
-            msg = "MDR <- M[MAR]\n";
+            msg += "MDR <- M[MAR]\n";
             edit.push_back("MDR");
             status++;
         }
@@ -231,7 +236,7 @@ simErrCode Simulator::decode() {
             string dr = getRegs(IR, 9);
             REGs[dr] = MDR;
             setCC(MDR);
-            msg = "DR <- MDR\nsetCC()\n";
+            msg += "DR <- MDR\nsetCC()\n";
             edit.push_back(dr);
             status = 0;
         }
@@ -242,7 +247,7 @@ simErrCode Simulator::decode() {
         _16_BIT tmp = convertTo16BIT(IR, 9);
         string DR = getRegs(IR, 9);
         REGs[DR] = PC + tmp;
-        msg = "DR <- PC + off9\nsetCC()\n";
+        msg += "DR <- PC + off9\nsetCC()\n";
         setCC(REGs[DR]);
         edit.push_back(DR);
         status = 0;
@@ -254,7 +259,7 @@ simErrCode Simulator::decode() {
         if (status == 3) {
             _16_BIT tmp = convertTo16BIT(IR, 9);
             MAR = PC + tmp;
-            msg = "MAR <- PC + off9\n";
+            msg += "MAR <- PC + off9\n";
             edit.push_back("MAR");
             status++;
         }
@@ -262,14 +267,14 @@ simErrCode Simulator::decode() {
         else if (status == 4) {
             string sr = getRegs(IR, 9);
             MDR = REGs[sr];
-            msg = "MDR <- SR\n";
+            msg += "MDR <- SR\n";
             edit.push_back("MDR");
             status++;
         }
 
         else {
             arr[MAR] = MDR;
-            msg = "M[MAR] <- MDR\n";
+            msg += "M[MAR] <- MDR\n";
             edit.push_back("ARR");
             status = 0;
         }
@@ -279,21 +284,21 @@ simErrCode Simulator::decode() {
         if (status == 3) {
             _16_BIT tmp = convertTo16BIT(IR, 9);
             MAR = PC + tmp;
-            msg = "MAR <- PC + off9\n";
+            msg += "MAR <- PC + off9\n";
             edit.push_back("MAR");
             status++;
         }
 
         else if (status == 4) {
             MDR = arr[MAR];
-            msg = "MDR <- M[MAR]\n";
+            msg += "MDR <- M[MAR]\n";
             edit.push_back("MDR");
             status++;
         }
 
         else if (status == 5) {
             MAR = MDR;
-            msg = "MAR <- MDR\n";
+            msg += "MAR <- MDR\n";
             edit.push_back("MAR");
             status++;
 
@@ -302,14 +307,14 @@ simErrCode Simulator::decode() {
         else if (status == 6) {
             string sr = getRegs(IR, 9);
             MDR = REGs[sr];
-            msg = "MDR <- SR\n";
+            msg += "MDR <- SR\n";
             edit.push_back("MDR");
             status++;
         }
 
         else {
             arr[MAR] = MDR;
-            msg = "M[MAR] <- MDR\n";
+            msg += "M[MAR] <- MDR\n";
             edit.push_back("ARR");
             status = 0;
         }
@@ -320,7 +325,7 @@ simErrCode Simulator::decode() {
             _16_BIT tmp = convertTo16BIT(IR, 6);
             string baseR = getRegs(IR, 6);
             MAR = REGs[baseR] + tmp;
-            msg = "MAR <- baseR + off6\n";
+            msg += "MAR <- baseR + off6\n";
             edit.push_back("MAR");
             status++;
         }
@@ -328,14 +333,14 @@ simErrCode Simulator::decode() {
         else if (status == 4) {
             string sr = getRegs(IR, 9);
             MDR = REGs[sr];
-            msg = "MDR <- SR\n";
+            msg += "MDR <- SR\n";
             edit.push_back("MDR");
             status++;
         }
 
         else {
             arr[MAR] = MDR;
-            msg = "M[MAR] <- MDR\n";
+            msg += "M[MAR] <- MDR\n";
             edit.push_back("ARR");
             status = 0;
         }
@@ -347,9 +352,10 @@ simErrCode Simulator::decode() {
             (P && (IR & 0x0200))) {
             _16_BIT tmp = convertTo16BIT(IR, 9);
             PC = PC + tmp;
-            msg = "PC <- PC + off9\n";
+            msg += "PC <- PC + off9\n";
             edit.push_back("PC");
         }
+
         status = 0;
     }
 
@@ -357,7 +363,7 @@ simErrCode Simulator::decode() {
 
         string sr = getRegs(IR, 6);
         PC = REGs[sr];
-        msg = "PC <- baseR\n";
+        msg += "PC <- baseR\n";
         edit.push_back("PC");
         status = 0;
 
@@ -370,7 +376,7 @@ simErrCode Simulator::decode() {
     else if (op_code == assembly_codes["JSR"] /* or JSRR */) {
 
         _16_BIT tmpp = PC;
-        msg = "tmpp <- PC\n";
+        msg += "tmpp <- PC\n";
         status++;
 
         if (IR & 0x0800 != 0) {
@@ -417,14 +423,14 @@ simErrCode Simulator::core() {
             break;
 
         case 1:
-            msg = "MDR <- M[MAR]\n";
+            msg += "MDR <- M[MAR]\n";
             MDR = arr[MAR];
 
             edit = { "MDR" };
             break;
 
         case 2:
-            msg = "IR <- MDR\n";
+            msg += "IR <- MDR\n";
             IR = MDR;
 
             edit = { "IR" };
@@ -433,9 +439,9 @@ simErrCode Simulator::core() {
         // decode
         default:
             return decode();
-            break;
     }
 
+    status++;
     return OK;
 }
 
@@ -471,6 +477,7 @@ bool Simulator::openFile() {
             infile.close();
             msg = "Done!";
             run = true;
+            init();
             return true;
         }
 
@@ -533,6 +540,10 @@ void Simulator::setCC(_16_BIT num) {
     Z = 0;
     P = 0;
     N = 0;
+
+    edit.push_back("Z");
+    edit.push_back("P");
+    edit.push_back("N");
 
     if (num == 0) Z = 1;
     if (num >> 15 == 1)

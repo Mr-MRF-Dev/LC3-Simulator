@@ -7,12 +7,14 @@ Assembly::Assembly() : msg("OK!") {
                         "LD",  "LDI", "LDR",  "LEA", "NOT", "RET", "RTI",
                         "ST",  "STR", "TRAP", "BIN", "HEX", "DEC" };
 
-    assembly_codes = { { "ADD", 0x1000 }, { "AND", 0x5000 }, { "BR", 0x0000 },
-                       { "JMP", 0xc000 }, { "JSR", 0x4000 }, { "JSRR", 0x4000 },
-                       { "LD", 0x2000 },  { "LDI", 0xa000 }, { "LDR", 0x6000 },
-                       { "LEA", 0xe000 }, { "NOT", 0x9000 }, { "RET", 0xc000 },
-                       { "RTI", 0x8000 }, { "ST", 0x3000 },  { "STR", 0x7000 },
-                       { "TRAP", 0xf000 } };
+    assembly_codes = {
+        { "ADD", 0x1000 },  { "AND", 0x5000 }, { "BR", 0x0000 },
+        { "JMP", 0xc000 },  { "JSR", 0x4000 }, { "JSRR", 0x4000 },
+        { "LD", 0x2000 },   { "LDI", 0xa000 }, { "LDR", 0x6000 },
+        { "LEA", 0xe000 },  { "NOT", 0x9000 }, { "RET", 0xc000 },
+        { "RTI", 0x8000 },  { "ST", 0x3000 },  { "STR", 0x7000 },
+        { "TRAP", 0xf000 }, { "STI", 0xb000 }
+    };
 
     REGs = { { "R0", 0 }, { "R1", 1 }, { "R2", 2 }, { "R3", 3 },
              { "R4", 4 }, { "R5", 5 }, { "R6", 6 }, { "R7", 7 } };
