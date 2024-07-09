@@ -36,7 +36,6 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     console->setStyleSheet("border: 1px solid gray;");
 
     step = new QPushButton;
-    step->setEnabled(false);
     step->setText("Step");
     connect(step, &QPushButton::clicked, this, &SimulatorWindow::stepFunc);
 
@@ -323,7 +322,7 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     l_main->addLayout(line1);
     l_main->addLayout(l_body);
 
-    claer();
+    clear();
 }
 
 void SimulatorWindow::stepFunc() {

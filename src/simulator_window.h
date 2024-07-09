@@ -41,7 +41,7 @@ private:
     QLineEdit* r7;
 
     void init();
-    void claer();
+    void clear();
 
 public:
     SimulatorWindow(QWidget *parent = nullptr);
