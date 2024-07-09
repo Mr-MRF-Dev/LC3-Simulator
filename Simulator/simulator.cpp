@@ -35,7 +35,7 @@ void Simulator::init() {
         { "LD", 0x2000 },   { "LDI", 0xa000 }, { "LDR", 0x6000 },
         { "LEA", 0xe000 },  { "NOT", 0x9000 }, { "RET", 0xc000 },
         { "RTI", 0x8000 },  { "ST", 0x3000 },  { "STR", 0x7000 },
-        { "TRAP", 0xf000 }, { "STI", 0xb000 }
+        { "TRAP", 0xf000 }, { "STI", 0xb000 }, { "HALT", 0xF000 }
     };
 
     run = false;
@@ -402,8 +402,15 @@ simErrCode Simulator::decode() {
     //     return JSRR(src, code);
     // }
 
+    else if(op_code == assembly_codes["HALT"]) {
+        msg += "halt\n";
+        run = false;
+        status = 0;
+    }
+
     else {
         status = 0;
+        run = false;
         return ERROR;
     }
 

@@ -5,7 +5,7 @@ string Assembly::getMsg() { return msg; }
 Assembly::Assembly() : msg("OK!") {
     assembly_labels = { "ORG", "ADD", "AND",  "BR",  "JMP", "JSR", "JSRR",
                         "LD",  "LDI", "LDR",  "LEA", "NOT", "RET", "RTI",
-                        "ST",  "STR", "TRAP", "BIN", "HEX", "DEC" };
+                        "ST",  "STR", "TRAP", "BIN", "HEX", "DEC", "HALT", "END" };
 
     assembly_codes = {
         { "ADD", 0x1000 },  { "AND", 0x5000 }, { "BR", 0x0000 },
@@ -13,7 +13,7 @@ Assembly::Assembly() : msg("OK!") {
         { "LD", 0x2000 },   { "LDI", 0xa000 }, { "LDR", 0x6000 },
         { "LEA", 0xe000 },  { "NOT", 0x9000 }, { "RET", 0xc000 },
         { "RTI", 0x8000 },  { "ST", 0x3000 },  { "STR", 0x7000 },
-        { "TRAP", 0xf000 }, { "STI", 0xb000 }
+        { "TRAP", 0xf000 }, { "STI", 0xb000 }, { "HALT", 0xf000 }
     };
 
     REGs = { { "R0", 0 }, { "R1", 1 }, { "R2", 2 }, { "R3", 3 },
@@ -104,6 +104,15 @@ errorCode Assembly::encode(_16_BIT pc, _16_BIT* src, vector<string> code,
 
     else if (front == "BIN" || front == "DEC" || front == "HEX") {
         return Variable(src, code);
+    }
+
+    else if (front == "END") {
+        return OK_VALID;
+    }
+
+    else if (front == "HALT") {
+        *src = assembly_codes["HALT"];
+        return OK_VALID;
     }
 
     msg = "Error in codes: invalid opcode\n";
