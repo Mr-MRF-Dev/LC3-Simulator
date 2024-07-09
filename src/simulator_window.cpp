@@ -138,6 +138,10 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     n->setMaximumWidth(40);
     z->setMaximumWidth(40);
     p->setMaximumWidth(40);
+
+    n->setAlignment(Qt::AlignCenter);
+    z->setAlignment(Qt::AlignCenter);
+    p->setAlignment(Qt::AlignCenter);
     /// add to layout
     l_nzp->addLayout(l_n);
     l_nzp->addLayout(l_z);
@@ -155,8 +159,151 @@ SimulatorWindow::SimulatorWindow(QWidget *parent):QWidget(parent) {
     l_header->addLayout(l_con);
     l_header->addLayout(l_side);
 
+    ///
+    ///
+    ///
+    ///
+    ///
+
+    QLabel* lab_r0 = new QLabel;
+    lab_r0->setText("« R0 »");
+    lab_r0->setAlignment(Qt::AlignCenter);
+
+    r0 = new QLineEdit(this);
+    r0->setText(QString("-"));
+    r0->setAlignment(Qt::AlignCenter);
+    r0->setEnabled(false);
+
+    QVBoxLayout* l_r0 = new QVBoxLayout;
+    l_r0->addWidget(lab_r0);
+    l_r0->addWidget(r0);
+
+    ///
+
+    QLabel* lab_r1 = new QLabel;
+    lab_r1->setText("« R1 »");
+    lab_r1->setAlignment(Qt::AlignCenter);
+
+    r1 = new QLineEdit(this);
+    r1->setText(QString("-"));
+    r1->setAlignment(Qt::AlignCenter);
+    r1->setEnabled(false);
+
+    QVBoxLayout* l_r1 = new QVBoxLayout;
+    l_r1->addWidget(lab_r1);
+    l_r1->addWidget(r1);
+
+
+    ///
+
+    QLabel* lab_r2 = new QLabel;
+    lab_r2->setText("« R2 »");
+    lab_r2->setAlignment(Qt::AlignCenter);
+
+    r2 = new QLineEdit(this);
+    r2->setText(QString("-"));
+    r2->setAlignment(Qt::AlignCenter);
+    r2->setEnabled(false);
+
+    QVBoxLayout* l_r2 = new QVBoxLayout;
+    l_r2->addWidget(lab_r2);
+    l_r2->addWidget(r2);
+
+    ///
+
+    QLabel* lab_r3 = new QLabel;
+    lab_r3->setText("« R3 »");
+    lab_r3->setAlignment(Qt::AlignCenter);
+
+    r3 = new QLineEdit(this);
+    r3->setText(QString("-"));
+    r3->setAlignment(Qt::AlignCenter);
+    r3->setEnabled(false);
+
+    QVBoxLayout* l_r3 = new QVBoxLayout;
+    l_r3->addWidget(lab_r3);
+    l_r3->addWidget(r3);
+
+    ///
+
+    QLabel* lab_r4 = new QLabel;
+    lab_r4->setText("« R4 »");
+    lab_r4->setAlignment(Qt::AlignCenter);
+
+    r4 = new QLineEdit(this);
+    r4->setText(QString("-"));
+    r4->setAlignment(Qt::AlignCenter);
+    r4->setEnabled(false);
+
+    QVBoxLayout* l_r4 = new QVBoxLayout;
+    l_r4->addWidget(lab_r4);
+    l_r4->addWidget(r4);
+
+    ///
+
+    QLabel* lab_r5 = new QLabel;
+    lab_r5->setText("« R5 »");
+    lab_r5->setAlignment(Qt::AlignCenter);
+
+    r5 = new QLineEdit(this);
+    r5->setText(QString("-"));
+    r5->setAlignment(Qt::AlignCenter);
+    r5->setEnabled(false);
+
+    QVBoxLayout* l_r5 = new QVBoxLayout;
+    l_r5->addWidget(lab_r5);
+    l_r5->addWidget(r5);
+
+    ///
+
+    QLabel* lab_r6 = new QLabel;
+    lab_r6->setText("« R6 »");
+    lab_r6->setAlignment(Qt::AlignCenter);
+
+    r6 = new QLineEdit(this);
+    r6->setText(QString("-"));
+    r6->setAlignment(Qt::AlignCenter);
+    r6->setEnabled(false);
+
+    QVBoxLayout* l_r6 = new QVBoxLayout;
+    l_r6->addWidget(lab_r6);
+    l_r6->addWidget(r6);
+
+    ///
+
+    QLabel* lab_r7 = new QLabel;
+    lab_r7->setText("« R7 »");
+    lab_r7->setAlignment(Qt::AlignCenter);
+
+    r7 = new QLineEdit(this);
+    r7->setText(QString("-"));
+    r7->setAlignment(Qt::AlignCenter);
+    r7->setEnabled(false);
+
+    QVBoxLayout* l_r7 = new QVBoxLayout;
+    l_r7->addWidget(lab_r7);
+    l_r7->addWidget(r7);
+
+    ///
+    ///
+    ///
+
+    QHBoxLayout* lr_14= new QHBoxLayout;
+    lr_14->addLayout(l_r0);
+    lr_14->addLayout(l_r1);
+    lr_14->addLayout(l_r2);
+    lr_14->addLayout(l_r3);
+
+    QHBoxLayout* lr_58= new QHBoxLayout;
+    lr_58->addLayout(l_r4);
+    lr_58->addLayout(l_r5);
+    lr_58->addLayout(l_r6);
+    lr_58->addLayout(l_r7);
+
     QVBoxLayout* l_body = new QVBoxLayout;
     l_body->addLayout(l_header);
+    l_body->addLayout(lr_14);
+    l_body->addLayout(lr_58);
 
     QHBoxLayout* l_main = new QHBoxLayout(this);
     l_main->addLayout(line1);

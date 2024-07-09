@@ -26,6 +26,15 @@ private:
     QLineEdit* p;
     QLineEdit* z;
 
+    QLineEdit* r0;
+    QLineEdit* r1;
+    QLineEdit* r2;
+    QLineEdit* r3;
+    QLineEdit* r4;
+    QLineEdit* r5;
+    QLineEdit* r6;
+    QLineEdit* r7;
+
 public:
     SimulatorWindow(QWidget *parent = nullptr);
 
