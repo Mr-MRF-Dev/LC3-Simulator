@@ -344,7 +344,7 @@ errorCode Assembly::LD(_16_BIT pc, _16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    int sum = (int)addr - (int)pc;
+    int sum = (int)addr - (int)pc - 1;
     shiftCopy(final, sum, 9);
 
     // 111 111 111
@@ -392,7 +392,7 @@ errorCode Assembly::LDI(_16_BIT pc, _16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    int sum = (int)addr - (int)pc;
+    int sum = (int)addr - (int)pc - 1;
     shiftCopy(final, sum, 9);
 
     // set the dr
@@ -483,7 +483,7 @@ errorCode Assembly::LEA(_16_BIT pc, _16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    int sum = (int)addr - (int)pc;
+    int sum = (int)addr - (int)pc - 1;
     shiftCopy(final, sum, 9);
 
     // set the dr
@@ -528,7 +528,7 @@ errorCode Assembly::ST(_16_BIT pc, _16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    int sum = (int)addr - (int)pc;
+    int sum = (int)addr - (int)pc - 1;
     shiftCopy(final, sum, 9);
 
     // set the dr
@@ -573,7 +573,7 @@ errorCode Assembly::STI(_16_BIT pc, _16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    int sum = (int)addr - (int)pc;
+    int sum = (int)addr - (int)pc - 1;
     shiftCopy(final, sum, 9);
 
     // set the dr
@@ -696,7 +696,7 @@ errorCode Assembly::BR(_16_BIT pc, _16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    int sum = (int)addr - (int)pc;
+    int sum = (int)addr - (int)pc - 1;
     shiftCopy(final, sum, 9);
 
     // set the nzp
@@ -776,7 +776,7 @@ errorCode Assembly::JSR(_16_BIT pc, _16_BIT* final, vector<string> vec,
         return lab;
     }
 
-    int sum = (int)addr - (int)pc;
+    int sum = (int)addr - (int)pc - 1;
     shiftCopy(final, sum, 9);
 
     _16_BIT flag = 1;
