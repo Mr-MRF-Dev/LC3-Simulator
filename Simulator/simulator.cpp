@@ -89,7 +89,7 @@ simErrCode Simulator::decode() {
 
         edit.push_back(dr);
 
-        if (IR & 0x0020 == 0x0020) {
+        if ((IR & 0x0020) == 0x0020) {
             // imm5
             tmp = convertTo16BIT(IR, 5);
             msg += "DR <- SR1 + imm5\nsetCC()\n";
@@ -114,7 +114,7 @@ simErrCode Simulator::decode() {
 
         edit.push_back(dr);
 
-        if (IR & 0x0020 == 0x0020) {
+        if ((IR & 0x0020) == 0x0020) {
             // imm5
             tmp = convertTo16BIT(IR, 5);
             msg += "DR <- SR1 & imm5\nsetCC()\n";
@@ -379,7 +379,7 @@ simErrCode Simulator::decode() {
         msg += "tmpp <- PC\n";
         status++;
 
-        if (IR & 0x0800 != 0) {
+        if ((IR & 0x0800) != 0) {
             _16_BIT tmp = convertTo16BIT(IR, 11);
             PC = PC + tmp;
             msg += "PC <- PC + off11\n";
@@ -397,10 +397,6 @@ simErrCode Simulator::decode() {
         msg += "R7 <- tmpp\n";
         status = 0;
     }
-
-    // else if (op_code == assembly_codes["JSRR"]) {
-    //     return JSRR(src, code);
-    // }
 
     else if (op_code == assembly_codes["HALT"]) {
         msg += "halt\n";
