@@ -14,18 +14,21 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 include_directories(Assembler)
 include_directories(Simulator)
+include_directories(Assembly)
+
+set(ASSEMBLY_SOURCES
+    Assembly/assembly.h
+    Assembly/assembly.cpp
+)
 
 set(ASSEMBLER_SOURCES
     Assembler/assembler.h
     Assembler/assembler.cpp
-    Assembler/assembly.h
-    Assembler/assembly.cpp
 )
 
 set(SIMULATOR_SOURCES
     Simulator/simulator.h
     Simulator/simulator.cpp
-
 )
 
 set(PROJECT_SOURCES
@@ -34,6 +37,7 @@ set(PROJECT_SOURCES
         src/assembler_window.cpp
         src/simulator_window.h
         src/simulator_window.cpp
+        ${ASSEMBLY_SOURCES}
         ${ASSEMBLER_SOURCES}
         ${SIMULATOR_SOURCES}
 )
