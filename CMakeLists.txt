@@ -17,26 +17,26 @@ include_directories(Simulator)
 include_directories(Assembly)
 
 set(ASSEMBLY_SOURCES
-    Assembly/assembly.h
-    Assembly/assembly.cpp
+    src/Assembly/assembly.h
+    src/Assembly/assembly.cpp
 )
 
 set(ASSEMBLER_SOURCES
-    Assembler/assembler.h
-    Assembler/assembler.cpp
+    src/Assembler/assembler.h
+    src/Assembler/assembler.cpp
 )
 
 set(SIMULATOR_SOURCES
-    Simulator/simulator.h
-    Simulator/simulator.cpp
+    src/Simulator/simulator.h
+    src/Simulator/simulator.cpp
 )
 
 set(PROJECT_SOURCES
-        src/main.cpp
-        src/assembler_window.h
-        src/assembler_window.cpp
-        src/simulator_window.h
-        src/simulator_window.cpp
+        src/main/main.cpp
+        src/main/assembler_window.h
+        src/main/assembler_window.cpp
+        src/main/simulator_window.h
+        src/main/simulator_window.cpp
         ${ASSEMBLY_SOURCES}
         ${ASSEMBLER_SOURCES}
         ${SIMULATOR_SOURCES}
