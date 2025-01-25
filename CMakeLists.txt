@@ -12,9 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
-include_directories(Assembler)
-include_directories(Simulator)
-include_directories(Assembly)
+include_directories(src/Assembler)
+include_directories(src/Simulator)
+include_directories(src/Assembly)
+include_directories(src/main)
 
 set(ASSEMBLY_SOURCES
     src/Assembly/assembly.h
@@ -31,15 +32,19 @@ set(SIMULATOR_SOURCES
     src/Simulator/simulator.cpp
 )
 
+set(MAIN_SOURCES
+    src/main/main.cpp
+    src/main/assembler_window.h
+    src/main/assembler_window.cpp
+    src/main/simulator_window.h
+    src/main/simulator_window.cpp
+)
+
 set(PROJECT_SOURCES
-        src/main/main.cpp
-        src/main/assembler_window.h
-        src/main/assembler_window.cpp
-        src/main/simulator_window.h
-        src/main/simulator_window.cpp
         ${ASSEMBLY_SOURCES}
         ${ASSEMBLER_SOURCES}
         ${SIMULATOR_SOURCES}
+        ${MAIN_SOURCES}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
