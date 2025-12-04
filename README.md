@@ -1,5 +1,8 @@
 # 🖥️ LC3 Simulator
 
+![GitHub repo size](https://img.shields.io/github/repo-size/mr-mrf-dev/LC3-Simulator)
+[![GitHub License](https://img.shields.io/github/license/mr-mrf-dev/LC3-Simulator)](/LICENSE)
+
 The project is an LC3 Simulator, which includes both an assembler and a hardware simulator for the LC3 architecture. The LC3 (Little Computer 3) is a simple educational computer architecture used to teach computer organization and assembly language programming.
 
 > **Note:** This project is still under development and may not be fully functional. in soon we will release the first version.
